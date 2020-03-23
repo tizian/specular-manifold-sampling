@@ -22,6 +22,10 @@ enum class ProfilerPhase : int {
     InitKDTree,                 /* kd-tree construction */
     Render,                     /* Integrator::render() */
     SamplingIntegratorSample,   /* SamplingIntegrator::sample() */
+    SMSCaustics,
+    SMSCausticsBernoulliTrials,
+    SMSGlints,
+    SMSGlintsBernoulliTrials,
     SampleEmitterRay,           /* Scene::sample_emitter_ray() */
     SampleEmitterDirection,     /* Scene::sample_emitter_direction() */
     RayTest,                    /* Scene::ray_test() */
@@ -51,6 +55,10 @@ constexpr const char
         "kd-tree construction",
         "Integrator::render()",
         "SamplingIntegrator::sample()",
+        "SMS::Caustics",
+        "SMS::CausticsBernoulliTrials",
+        "SMS::Glints",
+        "SMS::GlintsBernoulliTrials",
         "Scene::sample_emitter_ray()",
         "Scene::sample_emitter_direction()",
         "Scene::ray_test()",

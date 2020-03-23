@@ -71,6 +71,8 @@ MTS_PY_EXPORT(BSDF) {
             "ctx"_a, "si"_a, "wo"_a, "active"_a = true, D(BSDF, pdf))
         .def("eval_null_transmission", vectorize(&BSDF::eval_null_transmission),
             "si"_a, "active"_a = true, D(BSDF, eval_null_transmission))
+        .def("lean", vectorize(&BSDF::lean),
+            "si"_a, "active"_a = true, D(BSDF, lean))
         .def("flags", py::overload_cast<Mask>(&BSDF::flags, py::const_),
             "active"_a = true, D(BSDF, flags))
         .def("flags", py::overload_cast<size_t, Mask>(&BSDF::flags, py::const_),

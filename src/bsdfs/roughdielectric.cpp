@@ -450,6 +450,16 @@ public:
         return select(active, prob * abs(dwh_dwo), 0.f);
     }
 
+    Float roughness() const override {
+        Float alpha_u = m_alpha_u->mean(),
+              alpha_v = m_alpha_v->mean();
+        return 0.5f*(alpha_u + alpha_v);
+    }
+
+    Complex<Spectrum> ior(const SurfaceInteraction3f & /* si */, Mask /* active */) const override {
+        return Complex<Spectrum>(m_eta, 0.f);
+    }
+
     void traverse(TraversalCallback *callback) override {
         if (!has_flag(m_flags, BSDFFlags::Anisotropic))
             callback->put_object("alpha", m_alpha_u.get());

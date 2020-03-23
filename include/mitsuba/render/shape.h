@@ -327,6 +327,18 @@ public:
     /// Is this shape a triangle mesh?
     bool is_mesh() const { return m_mesh; }
 
+    /// Is this shape marked as glinty?
+    bool is_glinty() const { return m_glinty; }
+
+    /// Is this shape a caustic receiver?
+    bool is_caustic_receiver() const { return m_caustic_receiver; }
+
+    /// Is this shape a (single-bounce) caustic caster for specular manifold sampling?
+    bool is_caustic_caster_single_scatter()   const { return m_caustic_caster_single; }
+
+    /// Is this shape a (multi-bounce) caustic caster for specular manifold sampling?
+    bool is_caustic_caster_multi_scatter() const { return m_caustic_caster_multi; }
+
     /// Does the surface of this shape mark a medium transition?
     bool is_medium_transition() const { return m_interior_medium.get() != nullptr ||
                                                m_exterior_medium.get() != nullptr; }
@@ -409,6 +421,10 @@ protected:
     std::string get_children_string() const;
 protected:
     bool m_mesh = false;
+    bool m_glinty = false;
+    bool m_caustic_receiver = false;
+    bool m_caustic_caster_single = false;
+    bool m_caustic_caster_multi = false;
     ref<BSDF> m_bsdf;
     ref<Emitter> m_emitter;
     ref<Sensor> m_sensor;

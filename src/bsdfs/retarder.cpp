@@ -147,6 +147,14 @@ public:
         }
     }
 
+    Float roughness() const override {
+        return 0.f;
+    }
+
+    Complex<Spectrum> ior(const SurfaceInteraction3f & /* si */, Mask /* active */) const override {
+        return Complex<Spectrum>(1.f, 0.f);
+    }
+
     void traverse(TraversalCallback *callback) override {
         callback->put_object("theta", m_theta.get());
         callback->put_object("delta", m_delta.get());

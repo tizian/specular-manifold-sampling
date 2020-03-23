@@ -63,6 +63,13 @@ add_library(mitsuba-render-obj OBJECT
   srgb.cpp         ${INC_DIR}/srgb.h
                    ${INC_DIR}/optix/common.h
   optix_api.cpp    ${INC_DIR}/optix_api.h
+
+  normalmap.cpp        ${INC_DIR}/normalmap.h
+                       ${INC_DIR}/manifold.h
+  manifold_ss.cpp      ${INC_DIR}/manifold_ss.h
+  manifold_ms.cpp      ${INC_DIR}/manifold_ms.h
+  manifold_glints.cpp  ${INC_DIR}/manifold_glints.h
+
   ${LIBRENDER_EXTRA_SRC}
 )
 

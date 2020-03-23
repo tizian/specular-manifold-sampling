@@ -7,6 +7,8 @@
 #include <mitsuba/render/integrator.h>
 #include <mitsuba/render/records.h>
 
+#include <mitsuba/render/manifold_ss.h>
+
 NAMESPACE_BEGIN(mitsuba)
 
 /**!

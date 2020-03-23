@@ -406,7 +406,58 @@ public:
      *     the field <tt>si.wi</tt>.
      */
     virtual Spectrum eval_null_transmission(const SurfaceInteraction3f &si,
-                             Mask active = true) const;
+                                            Mask active = true) const;
+
+    /**
+     * \brief Sometimes, BSDF models make use of a perturbed frame for
+     * internal shading computations (e.g. bump maps). This function
+     * exposes this internal frame.
+     *
+     * Some BSDFs (e.g. normal maps) also expose a smoothing parameter (in
+     * [0, 1]) implemented e.g. via mipmapping.
+     */
+    virtual Frame3f frame(const SurfaceInteraction3f &si, Float smoothing,
+                          Mask active = true) const;
+
+    /**
+     * \brief Sometimes, BSDF models make use of a perturbed frame for
+     * internal shading computations (e.g. bump maps). This function
+     * computes the derivative of this frame with respect to the UV
+     * parameterization of the underlying shape.
+     *
+     * Some BSDFs (e.g. normal maps) also expose a smoothing parameter (in
+     * [0, 1]) implemented e.g. via mipmapping.
+     *
+     */
+    virtual std::pair<Frame3f, Frame3f>
+    frame_derivative(const SurfaceInteraction3f &si, Float smoothing,
+                     Mask active = true) const;
+
+    /**
+     * \brief Evaluate the LEAN mapping parameters (mean and variance) for the
+     * BSDF at the given surface interaction.
+     * If no UV partials are specified, fall back to coarsest mipmap level.
+     *
+     * The default implementation returns zero, indicating no LEAN information
+     * is available for that material.
+     */
+    virtual std::pair<Point2f, Matrix2f> lean(const SurfaceInteraction3f &si,
+                                              Mask active = true) const;
+
+    /**
+     * \brief For rough BSDFs: return the root mean square surface roughness
+     *
+     * An infinite value indicates that is ideally diffuse
+     */
+    virtual Float roughness() const;
+
+    /**
+     * \brief Return the material's (complex) index of refraction
+     * The default implementation returns [0.0, 1.0] which corresponds to
+     * a non-transmissive material without Fresnel effect.
+     */
+    virtual Complex<Spectrum> ior(const SurfaceInteraction3f &si,
+                                  Mask active = true) const;
 
     // -----------------------------------------------------------------------
     //! @{ \name BSDF property accessors (components, flags, etc)

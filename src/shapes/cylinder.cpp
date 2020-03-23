@@ -225,7 +225,7 @@ public:
 
         PositionSample3f ps;
         ps.p     = m_to_world.transform_affine(p);
-        ps.n     = normalize(n);
+        ps.n     = normalize(m_to_world * n);
         ps.pdf   = m_inv_surface_area;
         ps.time  = time;
         ps.delta = false;

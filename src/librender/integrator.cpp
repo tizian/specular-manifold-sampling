@@ -141,6 +141,21 @@ MTS_VARIANT bool SamplingIntegrator<Float, Spectrum>::render(Scene *scene, Senso
                 }
             }
         );
+
+        if (!m_stop) {
+            if (m_timeout > 0) {
+                Float spp_f = blocks_done;
+                spp_f /= spiral.block_count();
+                int spp = int(floor(spp_f));
+
+                Log(Info, "Rendering finished. Computed %d spp and took %s.",
+                    spp, util::time_string(m_render_timer.value(), true));
+            } else {
+                Log(Info, "Rendering finished. (took %s)",
+                    util::time_string(m_render_timer.value(), true));
+            }
+        }
+
     } else {
         ref<Sampler> sampler = sensor->sampler();
 
@@ -166,11 +181,11 @@ MTS_VARIANT bool SamplingIntegrator<Float, Spectrum>::render(Scene *scene, Senso
                           pos, diff_scale_factor);
 
         film->put(block);
-    }
 
-    if (!m_stop)
-        Log(Info, "Rendering finished. (took %s)",
-            util::time_string(m_render_timer.value(), true));
+        if (!m_stop)
+            Log(Info, "Rendering finished. (took %s)",
+                util::time_string(m_render_timer.value(), true));
+    }
 
     return !m_stop;
 }

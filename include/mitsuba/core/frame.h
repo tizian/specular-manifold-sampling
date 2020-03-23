@@ -199,6 +199,49 @@ Frame compute_shading_frame(const Normal3f &n, const Vector3f &dp_du) {
     return Frame(s, cross(n, s), n);
 }
 
+/**
+ * \brief Compute the spatial derivative of \ref compute_shading_frame
+ *
+ * \param n
+ *    A shading normal at a surface position
+ * \param dp_du
+ *    Position derivative of the underlying parameterization with respect to
+ *    the 'u' coordinate
+ * \param dn_du
+ *    Derivative of the shading normal along the 'u' coordinate
+ * \param dn_dv
+ *    Derivative of the shading normal along the 'v' coordinate
+
+ * \return A pair (dframe_du, dframe_dv) consisting of
+ *
+ *     dframe_du: The 'u' derivative of the frame
+ *
+ *     dframe_dv: The 'v' derivative of the frame
+ */
+template <typename Normal3f, typename Vector3f,
+          typename Float = value_t<Normal3f>,
+          typename Frame = mitsuba::Frame<Float>>
+std::pair<Frame, Frame> compute_shading_frame_derivative(const Normal3f &n,
+                                                         const Vector3f &dp_du,
+                                                         const Vector3f &dn_du,
+                                                         const Vector3f &dn_dv) {
+    Vector3f s = dp_du - n * dot(n, dp_du);
+    Float inv_len_s = rcp(norm(s));
+    s *= inv_len_s;
+
+    Frame dframe_du, dframe_dv;
+    dframe_du.s = inv_len_s * (-dn_du * dot(n, dp_du) - n * dot(dn_du, dp_du));
+    dframe_dv.s = inv_len_s * (-dn_dv * dot(n, dp_du) - n * dot(dn_dv, dp_du));
+    dframe_du.s -= s * dot(dframe_du.s, s);
+    dframe_dv.s -= s * dot(dframe_dv.s, s);
+
+    dframe_du.t = cross(dn_du, s) + cross(n, dframe_du.s);
+    dframe_dv.t = cross(dn_dv, s) + cross(n, dframe_dv.s);
+    dframe_du.n = dn_du;
+    dframe_dv.n = dn_dv;
+    return std::make_pair(dframe_du, dframe_dv);
+}
+
 NAMESPACE_END(mitsuba)
 
 ENOKI_STRUCT_SUPPORT(mitsuba::Frame, s, t, n)

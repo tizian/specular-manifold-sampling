@@ -158,6 +158,34 @@ public:
                m_nested_bsdf[1]->pdf(ctx, si, wo, active) * weight;
     }
 
+    /* Note: these next few implementations are not ideal in general, but
+       made specifically for the glint case where we want to blend with
+       some other (e.g. diffuse) BSDF for some of the example materials. */
+
+    Frame3f frame(const SurfaceInteraction3f &si, Float smoothing,
+                  Mask active) const override {
+        return m_nested_bsdf[0]->frame(si, smoothing, active);
+    }
+
+    std::pair<Frame3f, Frame3f>
+    frame_derivative(const SurfaceInteraction3f &si, Float smoothing,
+                     Mask active) const override {
+        return m_nested_bsdf[0]->frame_derivative(si, smoothing, active);
+    }
+
+    std::pair<Point2f, Matrix2f>
+    lean(const SurfaceInteraction3f &si, Mask active) const override {
+        return m_nested_bsdf[0]->lean(si, active);
+    }
+
+    Float roughness() const override {
+        return m_nested_bsdf[0]->roughness();
+    }
+
+    Complex<Spectrum> ior(const SurfaceInteraction3f &si, Mask active) const override {
+        return m_nested_bsdf[0]->ior(si, active);
+    }
+
     MTS_INLINE Float eval_weight(const SurfaceInteraction3f &si, const Mask &active) const {
         return clamp(m_weight->eval_1(si, active), 0.f, 1.f);
     }

@@ -1,5 +1,6 @@
 #include <mitsuba/render/bsdf.h>
 #include <mitsuba/core/properties.h>
+#include <mitsuba/render/shape.h>
 
 NAMESPACE_BEGIN(mitsuba)
 
@@ -11,6 +12,38 @@ MTS_VARIANT BSDF<Float, Spectrum>::~BSDF() { }
 MTS_VARIANT Spectrum BSDF<Float, Spectrum>::eval_null_transmission(
     const SurfaceInteraction3f & /* si */, Mask /* active */) const {
     return 0.f;
+}
+
+MTS_VARIANT typename BSDF<Float, Spectrum>::Frame3f
+BSDF<Float, Spectrum>::frame(const SurfaceInteraction3f &si,
+                             Float /* smoothing */,
+                             Mask /* active */) const {
+    return compute_shading_frame(si.sh_frame.n, si.dp_du);
+}
+
+MTS_VARIANT std::pair<typename BSDF<Float, Spectrum>::Frame3f,
+                      typename BSDF<Float, Spectrum>::Frame3f>
+BSDF<Float, Spectrum>::frame_derivative(const SurfaceInteraction3f &si,
+                                        Float /* smoothing */,
+                                        Mask /* active */) const {
+    auto [dn_du, dn_dv] = (si.instance ? si.instance : si.shape)->normal_derivative(si);
+    return compute_shading_frame_derivative(si.sh_frame.n, si.dp_du, dn_du, dn_dv);
+}
+
+MTS_VARIANT std::pair<typename BSDF<Float, Spectrum>::Point2f,
+                      typename BSDF<Float, Spectrum>::Matrix2f>
+BSDF<Float, Spectrum>::lean(const SurfaceInteraction3f & /* si */,
+                            Mask /* active */) const {
+    return { 0.f, 0.f };
+}
+
+MTS_VARIANT Float BSDF<Float, Spectrum>::roughness() const {
+    return math::Infinity<Float>;
+}
+
+MTS_VARIANT Complex<Spectrum> BSDF<Float, Spectrum>::ior(const SurfaceInteraction3f & /* si */,
+                                                         Mask /* active */) const {
+    return {0.f, 1.f};
 }
 
 MTS_VARIANT std::string BSDF<Float, Spectrum>::id() const { return m_id; }

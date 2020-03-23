@@ -5,6 +5,7 @@ MTS_PY_DECLARE(EmitterExtras);
 MTS_PY_DECLARE(MicrofacetType);
 MTS_PY_DECLARE(PhaseFunctionExtras);
 MTS_PY_DECLARE(Spiral);
+MTS_PY_DECLARE(SMSConfig);
 
 PYBIND11_MODULE(render_ext, m) {
     // Temporarily change the module name (for pydoc)
@@ -15,6 +16,7 @@ PYBIND11_MODULE(render_ext, m) {
     MTS_PY_IMPORT(MicrofacetType);
     MTS_PY_IMPORT(PhaseFunctionExtras);
     MTS_PY_IMPORT(Spiral);
+    MTS_PY_IMPORT(SMSConfig);
 
     // Change module name back to correct value
     m.attr("__name__") = "mitsuba.render_ext";

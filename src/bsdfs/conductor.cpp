@@ -210,7 +210,7 @@ public:
             if (material != "none")
                 Throw("Should specify either (eta, k) or material, not both.");
         } else {
-            std::tie(m_eta, m_k) = complex_ior_from_file<Spectrum, Texture>(props.string("material", "Cu"));
+            std::tie(m_eta, m_k) = complex_ior_from_file<Spectrum, Texture>(props.string("material", "none"));
         }
     }
 
@@ -283,6 +283,16 @@ public:
     Float pdf(const BSDFContext & /*ctx*/, const SurfaceInteraction3f & /*si*/,
               const Vector3f & /*wo*/, Mask /*active*/) const override {
         return 0.f;
+    }
+
+    Float roughness() const override {
+        return 0.f;
+    }
+
+    Complex<Spectrum> ior(const SurfaceInteraction3f &si, Mask active) const override {
+        Complex<Spectrum> eta(m_eta->eval(si, active),
+                              m_k  ->eval(si, active));
+        return eta;
     }
 
     void traverse(TraversalCallback *callback) override {

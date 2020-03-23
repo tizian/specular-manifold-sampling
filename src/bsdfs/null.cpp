@@ -71,6 +71,14 @@ public:
         return unpolarized<Spectrum>(1.f);
     }
 
+    Float roughness() const override {
+        return 0.f;
+    }
+
+    Complex<Spectrum> ior(const SurfaceInteraction3f & /* si */, Mask /* active */) const override {
+        return Complex<Spectrum>(1.f, 0.f);
+    }
+
     std::string to_string() const override { return "Null[]"; }
 
     MTS_DECLARE_CLASS()

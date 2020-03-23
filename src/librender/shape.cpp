@@ -74,6 +74,11 @@ MTS_VARIANT Shape<Float, Spectrum>::Shape(const Properties &props) : m_id(props.
     // Create a default diffuse BSDF if needed.
     if (!m_bsdf)
         m_bsdf = PluginManager::instance()->create_object<BSDF>(Properties("diffuse"));
+
+    m_glinty = props.bool_("glinty", false);
+    m_caustic_receiver = props.bool_("caustic_receiver", false);
+    m_caustic_caster_single = props.bool_("caustic_caster_single", false);
+    m_caustic_caster_multi = props.bool_("caustic_caster_multi", false);
 }
 
 MTS_VARIANT Shape<Float, Spectrum>::~Shape() {

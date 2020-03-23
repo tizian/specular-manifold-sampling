@@ -33,6 +33,7 @@ foreach (MTS_VARIANT ${MTS_VARIANTS})
     srgb_v.cpp
     texture_v.cpp
     # volume_v.cpp
+    manifold_v.cpp
   )
 
   target_compile_definitions(${TARGET_NAME}-obj PRIVATE
@@ -56,6 +57,7 @@ add_mitsuba_python_library(render_ext
   microfacet.cpp
   phase.cpp
   spiral.cpp
+  manifold.cpp
 )
 
 target_link_libraries(render_ext PRIVATE mitsuba-core mitsuba-render tbb)

@@ -325,6 +325,14 @@ public:
         return 0.f;
     }
 
+    Float roughness() const override {
+        return 0.f;
+    }
+
+    Complex<Spectrum> ior(const SurfaceInteraction3f & /* si */, Mask /* active */) const override {
+        return Complex<Spectrum>(m_eta, 0.f);
+    }
+
     void traverse(TraversalCallback *callback) override {
         callback->put_parameter("eta", m_eta);
         if (m_specular_reflectance)

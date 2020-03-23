@@ -705,6 +705,21 @@ Mesh<Float, Spectrum>::normal_derivative(const SurfaceInteraction3f &si, bool sh
     dndu = fnmadd(N, dot(N, dndu), dndu);
     dndv = fnmadd(N, dot(N, dndv), dndv);
 
+    if (has_vertex_texcoords()) {
+        Point2f uv0 = vertex_texcoord(fi[0], active),
+                uv1 = vertex_texcoord(fi[1], active),
+                uv2 = vertex_texcoord(fi[2], active);
+
+        Vector2f duv1 = uv1 - uv0,
+                 duv2 = uv2 - uv0;
+        inv_det = rcp(duv1.x() * duv2.y() - duv1.y() * duv2.x());
+
+        Vector3f dndu_ = ( duv2.y() * dndu - duv1.y() * dndv) * inv_det,
+                 dndv_ = (-duv2.x() * dndu + duv1.x() * dndv) * inv_det;
+        dndu = dndu_;
+        dndv = dndv_;
+    }
+
     return { dndu, dndv };
 }
 

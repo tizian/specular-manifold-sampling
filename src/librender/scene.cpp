@@ -96,6 +96,20 @@ MTS_VARIANT Scene<Float, Spectrum>::Scene(const Properties &props) {
     // Create emitters' shapes (environment luminaires)
     for (Emitter *emitter: m_emitters)
         emitter->set_scene(this);
+
+    for (Shape *shape: m_shapes) {
+        if (shape->is_caustic_caster_single_scatter())
+            m_caustic_casters_single.push_back(shape);
+        if (shape->is_caustic_caster_multi_scatter())
+            m_caustic_casters_multi.push_back(shape);
+    }
+
+    for (Emitter *emitter: m_emitters) {
+        if (emitter->is_caustic_emitter_single_scatter())
+            m_caustic_emitters_single.push_back(emitter);
+        if (emitter->is_caustic_emitter_multi_scatter())
+            m_caustic_emitters_multi.push_back(emitter);
+    }
 }
 
 MTS_VARIANT Scene<Float, Spectrum>::~Scene() {

@@ -180,6 +180,82 @@ public:
         return result;
     }
 
+    Frame3f frame(const SurfaceInteraction3f &si, Float smoothing,
+                  Mask active) const override {
+        Mask front_side = Frame3f::cos_theta(si.wi) > 0.f && active;
+        Mask back_side  = Frame3f::cos_theta(si.wi) < 0.f && active;
+
+        Frame3f result;
+
+        if (any(front_side)) {
+            auto tmp = m_brdf[0]->frame(si, smoothing, front_side);
+            masked(result, front_side) = tmp;
+        }
+
+        if (any(back_side)) {
+            auto tmp = m_brdf[1]->frame(si, smoothing, back_side);
+            tmp.n *= -1.f;
+            masked(result, back_side) = tmp;
+        }
+
+        return result;
+    }
+
+    std::pair<Frame3f, Frame3f>
+    frame_derivative(const SurfaceInteraction3f &si, Float smoothing,
+                     Mask active) const override {
+        Mask front_side = Frame3f::cos_theta(si.wi) > 0.f && active;
+        Mask back_side  = Frame3f::cos_theta(si.wi) < 0.f && active;
+
+        Frame3f result_u, result_v;
+
+        if (any(front_side)) {
+            auto [tmp_u, tmp_v] = m_brdf[0]->frame_derivative(si, smoothing, front_side);
+            masked(result_u, front_side) = tmp_u;
+            masked(result_v, front_side) = tmp_v;
+        }
+
+        if (any(back_side)) {
+            auto [tmp_u, tmp_v] = m_brdf[1]->frame_derivative(si, smoothing, back_side);
+            tmp_u.n *= -1.f;
+            tmp_v.n *= -1.f;
+            masked(result_u, back_side) = tmp_u;
+            masked(result_v, back_side) = tmp_v;
+        }
+
+        return std::make_pair(result_u, result_v);
+    }
+
+    std::pair<Point2f, Matrix2f>
+    lean(const SurfaceInteraction3f &si, Mask active) const override {
+        Mask front_side = Frame3f::cos_theta(si.wi) > 0.f && active;
+        Mask back_side  = Frame3f::cos_theta(si.wi) < 0.f && active;
+
+        Point2f result_mu; Matrix2f result_sigma;
+
+        if (any(front_side)) {
+            auto [mu, sigma] = m_brdf[0]->lean(si, front_side);
+            masked(result_mu, front_side) = mu;
+            masked(result_sigma, front_side) = sigma;
+        }
+
+        if (any(back_side)) {
+            auto [mu, sigma] = m_brdf[0]->lean(si, back_side);
+            masked(result_mu, back_side) = mu;
+            masked(result_sigma, back_side) = sigma;
+        }
+
+        return { result_mu, result_sigma };
+    }
+
+    Float roughness() const override {
+        return m_brdf[0]->roughness();  // Let's assume both sides are the same ...
+    }
+
+    Complex<Spectrum> ior(const SurfaceInteraction3f &si, Mask active) const override {
+        return m_brdf[0]->ior(si, active);  // Let's assume both sides are the same ...
+    }
+
     void traverse(TraversalCallback *callback) override {
         callback->put_object("brdf_0", m_brdf[0].get());
         callback->put_object("brdf_1", m_brdf[1].get());

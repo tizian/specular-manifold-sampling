@@ -67,6 +67,12 @@ public:
         return has_flag(m_flags, EmitterFlags::Infinite) && !has_flag(m_flags, EmitterFlags::Delta);
     }
 
+    /// Is this emitter used for (single-bounce) specular manifold sampling?
+    bool is_caustic_emitter_single_scatter() const { return m_caustic_emitter_single; }
+
+    /// Is this emitter used for (multi-bounce) specular manifold sampling?
+    bool is_caustic_emitter_multi_scatter() const { return m_caustic_emitter_multi; }
+
     /// Flags for all components combined.
     uint32_t flags(mask_t<Float> /*active*/ = true) const { return m_flags; }
 
@@ -81,6 +87,9 @@ protected:
 protected:
     /// Combined flags for all properties of this emitter.
     uint32_t m_flags;
+
+    bool m_caustic_emitter_single;
+    bool m_caustic_emitter_multi;
 };
 
 MTS_EXTERN_CLASS_RENDER(Emitter)
