@@ -13,5 +13,6 @@ MTS_PY_EXPORT(SMSConfig) {
         .def_readwrite("solver_threshold", &SMSConfig::solver_threshold)
         .def_readwrite("uniqueness_threshold", &SMSConfig::uniqueness_threshold)
         .def_readwrite("max_trials", &SMSConfig::max_trials)
+        .def_readwrite("bounces", &SMSConfig::bounces)
         .def("__repr__", &SMSConfig::to_string);
 }

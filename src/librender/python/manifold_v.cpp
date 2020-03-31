@@ -26,7 +26,6 @@ MTS_PY_EXPORT(ManifoldVertex) {
         .def_readwrite("eta", &ManifoldVertex::eta)
         .def_readonly("shape", &ManifoldVertex::shape)
         .def_readwrite("uv", &ManifoldVertex::uv)
-        .def_readwrite("n_offset", &ManifoldVertex::n_offset)
         .def_readwrite("C", &ManifoldVertex::C)
         .def_readwrite("dC_dx_prev", &ManifoldVertex::dC_dx_prev)
         .def_readwrite("dC_dx_cur", &ManifoldVertex::dC_dx_cur)
@@ -82,5 +81,4 @@ MTS_PY_EXPORT(SpecularManifoldSingleScatter) {
             "v0p"_a, "v1"_a, "v2p"_a, "n_offset"_a=Vector3f(0.f, 0.f, 1.f))
         .def("compute_step_anglediff", &SpecularManifoldSingleScatter::compute_step_anglediff,
             "v0p"_a, "v1"_a, "v2p"_a, "n_offset"_a=Vector3f(0.f, 0.f, 1.f));
-
 }

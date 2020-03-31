@@ -20,6 +20,8 @@ struct SMSConfig {
     float uniqueness_threshold = 1e-4f;     // Threshold to distinguish unique solution paths (for pdf estimation)
     int max_trials = -1;                    // Trial set size M (for biased SMS), or upper limit of Bernoulli trials (for unbiased SMS)
 
+    int bounces = 1;                        // For multi-bounce implementation, what path length should be sampled?
+
     SMSConfig() {}
 
     std::string to_string() const {
@@ -67,7 +69,6 @@ struct ManifoldVertex {
     Mask fixed_direction;
 
     // Used in multi-bounce version
-    Normal3f n_offset;
     Vector2f C;
     Matrix2f dC_dx_prev, dC_dx_cur, dC_dx_next;
     Matrix2f tmp, inv_lambda;

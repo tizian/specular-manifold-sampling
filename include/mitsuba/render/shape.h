@@ -334,10 +334,13 @@ public:
     bool is_caustic_receiver() const { return m_caustic_receiver; }
 
     /// Is this shape a (single-bounce) caustic caster for specular manifold sampling?
-    bool is_caustic_caster_single_scatter()   const { return m_caustic_caster_single; }
+    bool is_caustic_caster_single_scatter() const { return m_caustic_caster_single; }
 
     /// Is this shape a (multi-bounce) caustic caster for specular manifold sampling?
     bool is_caustic_caster_multi_scatter() const { return m_caustic_caster_multi; }
+
+    /// Is this shape a (multi-bounce) caustic bouncer (i.e. it can be an intermediate vertex of a longer chain)?
+    bool is_caustic_bouncer() const { return m_caustic_bouncer; }
 
     /// Does the surface of this shape mark a medium transition?
     bool is_medium_transition() const { return m_interior_medium.get() != nullptr ||
@@ -425,6 +428,7 @@ protected:
     bool m_caustic_receiver = false;
     bool m_caustic_caster_single = false;
     bool m_caustic_caster_multi = false;
+    bool m_caustic_bouncer = false;
     ref<BSDF> m_bsdf;
     ref<Emitter> m_emitter;
     ref<Sensor> m_sensor;
