@@ -43,6 +43,18 @@ public:
         PYBIND11_OVERLOAD_PURE(Spectrum, Sensor, eval, si, active);
     }
 
+    Float importance(const Point3f &p, const Vector3f &d, Mask active) const override {
+        PYBIND11_OVERLOAD_PURE(Float, Sensor, importance, p, d, active);
+    }
+
+    Transform4f sample_to_camera() const override {
+        PYBIND11_OVERLOAD_PURE(Transform4f, Sensor, sample_to_camera);
+    }
+
+    Transform4f camera_to_world(Float time, Mask active) const override {
+        PYBIND11_OVERLOAD_PURE(Transform4f, Sensor, camera_to_world, time, active);
+    }
+
     ScalarBoundingBox3f bbox() const override {
         PYBIND11_OVERLOAD_PURE(ScalarBoundingBox3f, Sensor, bbox,);
     }

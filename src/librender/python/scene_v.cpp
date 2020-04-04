@@ -59,6 +59,10 @@ MTS_PY_EXPORT(Scene) {
         .def("bbox", &Scene::bbox, D(Scene, bbox))
         .def("sensors", py::overload_cast<>(&Scene::sensors), D(Scene, sensors))
         .def("emitters", py::overload_cast<>(&Scene::emitters), D(Scene, emitters))
+        .def("caustic_emitters_single_scatter", py::overload_cast<>(&Scene::caustic_emitters_single_scatter),
+             D(Scene, caustic_emitters_single_scatter))
+        .def("caustic_emitters_multi_scatter", py::overload_cast<>(&Scene::caustic_emitters_multi_scatter),
+             D(Scene, caustic_emitters_multi_scatter))
         .def_method(Scene, environment)
         .def("shapes", [](const Scene &scene) {
             py::list result;

@@ -62,6 +62,15 @@ public:
                             const Point2f &sample2, const Point2f &sample3,
                             Mask active = true) const;
 
+
+    /// Sensor importance evaluation
+    virtual Float importance(const Point3f &p, const Vector3f &d,
+                             Mask active = true) const = 0;
+
+    /// Access to the internal transform matrices
+    virtual Transform4f sample_to_camera() const = 0;
+    virtual Transform4f camera_to_world(Float time, Mask active = true) const = 0;
+
     //! @}
     // =============================================================
 

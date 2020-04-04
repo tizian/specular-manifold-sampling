@@ -37,6 +37,8 @@ MTS_VARIANT SamplingIntegrator<Float, Spectrum>::SamplingIntegrator(const Proper
 
     /// Disable direct visibility of emitters if needed
     m_hide_emitters = props.bool_("hide_emitters", false);
+
+    m_glint_diff_scale_factor_clamp = props.float_("glint_diff_scale_factor_clamp", 0.f);
 }
 
 MTS_VARIANT SamplingIntegrator<Float, Spectrum>::~SamplingIntegrator() { }
@@ -160,6 +162,7 @@ MTS_VARIANT bool SamplingIntegrator<Float, Spectrum>::render(Scene *scene, Senso
         ref<Sampler> sampler = sensor->sampler();
 
         ScalarFloat diff_scale_factor = rsqrt((ScalarFloat) sampler->sample_count());
+        diff_scale_factor = max(diff_scale_factor, m_glint_diff_scale_factor_clamp);
         ScalarUInt32 total_sample_count = hprod(film_size) * (uint32_t) samples_per_pass;
         if (sampler->wavefront_size() != total_sample_count)
             sampler->seed(arange<UInt64>(total_sample_count));
@@ -203,6 +206,7 @@ MTS_VARIANT void SamplingIntegrator<Float, Spectrum>::render_block(const Scene *
                                            : sample_count_);
 
     ScalarFloat diff_scale_factor = rsqrt((ScalarFloat) sampler->sample_count());
+    diff_scale_factor = max(diff_scale_factor, m_glint_diff_scale_factor_clamp);
 
     if constexpr (!is_array_v<Float>) {
         for (uint32_t i = 0; i < pixel_count && !should_stop(); ++i) {

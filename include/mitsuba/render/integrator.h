@@ -196,6 +196,9 @@ protected:
 
     /// Flag for disabling direct visibility of emitters
     bool m_hide_emitters;
+
+    /// For glint rendering, clamp the ray-differential scale factor
+    Float m_glint_diff_scale_factor_clamp;
 };
 
 /*

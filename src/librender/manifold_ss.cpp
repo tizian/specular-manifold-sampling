@@ -46,7 +46,7 @@ SpecularManifoldSingleScatter<Float, Spectrum>::specular_manifold_sampling(const
     }
 
     // Sample emitter interaction
-    EmitterInteraction ei = SpecularManifold::sample_emitter_interaction(m_scene, si, sampler, false);
+    EmitterInteraction ei = SpecularManifold::sample_emitter_interaction(si, m_scene->caustic_emitters_single_scatter(), sampler);
 
     // For each specular shape, perform one estimate
     auto shapes = m_scene->caustic_casters_single_scatter();

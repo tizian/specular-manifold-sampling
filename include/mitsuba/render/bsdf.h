@@ -445,6 +445,32 @@ public:
                                               Mask active = true) const;
 
     /**
+     * \brief Sometimes, BSDF models make use of a perturbed frame for shading
+     * computations (e.g. bump maps). This function returns this internal
+     * shading normal in slope space.
+     * In principle, the same could be computed from \ref frame, but this more
+     * direct access is useful for glint rendering.
+     *
+     * \param uv
+     *     The texture coordinates where the slope should be evaluated
+     */
+    virtual Point2f slope(const Point2f &uv, Mask active = true) const;
+
+
+    /**
+     * \brief Sometimes, BSDF models make use of a perturbed frame for shading
+     * computations (e.g. bump maps). This function returns the UV derivatives
+     * of this internal shading normal in slope space.
+     * In principle, the same could be computed from \ref frame_derivative, but
+     * this more direct access is useful for glint rendering.
+     *
+     * \param uv
+     *     The texture coordinates where the slope derivatives should be evaluated
+     */
+    virtual std::pair<Vector2f, Vector2f>
+    slope_derivative(const Point2f &uv, Mask active = true) const;
+
+    /**
      * \brief For rough BSDFs: return the root mean square surface roughness
      *
      * An infinite value indicates that is ideally diffuse

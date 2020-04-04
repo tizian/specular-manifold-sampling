@@ -120,6 +120,7 @@ public:
         // ---------------------- First intersection ----------------------
 
         SurfaceInteraction3f si = scene->ray_intersect(ray, active);
+        si.compute_partials(ray);
         Mask valid_ray = si.is_valid();
         EmitterPtr emitter = si.emitter(scene);
 

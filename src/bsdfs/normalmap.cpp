@@ -44,7 +44,7 @@ public:
         m_use_slopes = props.bool_("use_slopes", true);
 
         m_lean_fallback = props.bool_("lean_fallback", false);
-        m_alpha_u = m_alpha_v = props.float_("lean_fallback_alpha", 0.00001f);
+        m_alpha_u = m_alpha_v = props.float_("lean_fallback_alpha", 0.0001f);
         std::string material = props.string("lean_fallback_material", "none");
         if (props.has_property("eta") || material == "none") {
             m_eta = props.texture<Texture>("eta", 0.f);
@@ -95,7 +95,7 @@ public:
             bs.sampled_type = +BSDFFlags::GlossyReflection;
 
             Float G = LEAN::gaf(m, bs.wo, si.wi, params);
-            active &= G > 0.f && Frame3f::cos_theta(bs.wo) < 0.f;
+            active &= G > 0.f && Frame3f::cos_theta(bs.wo) > 0.f;
 
             Complex<Spectrum> eta_c(m_eta->eval(si, active),
                                     m_k->eval(si, active));
@@ -304,6 +304,39 @@ public:
         Point2f mu(-n[0]/n[2], -n[1]/n[2]);
         Matrix2f sigma = m_normalmap->eval_lean_sigma(uv, level, true);
         return std::make_pair(mu, sigma);
+    }
+
+    Point2f slope(const Point2f &uv_, Mask active) const override {
+        if (unlikely(!m_use_slopes)) {
+            Log(Warn, "Normalmap: For glint rendering, only slope-based normal maps are supported.");
+        }
+
+        Point2f uv = uv_;
+        uv *= m_tiles;
+        uv -= floor(uv);
+
+        Normal3f n = m_normalmap->eval_normal(uv, 0, true, active);
+        return Point2f(-n[0], -n[1]);   // n[2] == 1
+    }
+
+    std::pair<Vector2f, Vector2f>
+    slope_derivative(const Point2f &uv_, Mask active) const override {
+        if (unlikely(!m_use_slopes)) {
+            Log(Warn, "Normalmap: For glint rendering, only slope-based normal maps are supported.");
+        }
+
+        Point2f uv = uv_;
+        uv *= m_tiles;
+        uv -= floor(uv);
+
+        auto [du_, dv_] = m_normalmap->eval_normal_derivatives(uv, 0, true, active);
+        Vector2f du(du_[0], du_[1]);
+        Vector2f dv(dv_[0], dv_[1]);
+        // Scale to account for tiling scale
+        du *= m_tiles;
+        dv *= m_tiles;
+
+        return { du, dv };
     }
 
     Float roughness() const override {

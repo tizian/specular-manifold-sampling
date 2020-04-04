@@ -77,6 +77,7 @@ MTS_PY_DECLARE(ManifoldVertex);
 MTS_PY_DECLARE(EmitterInteraction);
 MTS_PY_DECLARE(SpecularManifold);
 MTS_PY_DECLARE(SpecularManifoldSingleScatter);
+MTS_PY_DECLARE(SpecularManifoldGlints);
 
 PYBIND11_MODULE(MODULE_NAME, m) {
     // Temporarily change the module name (for pydoc)
@@ -115,6 +116,7 @@ PYBIND11_MODULE(MODULE_NAME, m) {
     MTS_PY_IMPORT(EmitterInteraction);
     MTS_PY_IMPORT(SpecularManifold);
     MTS_PY_IMPORT(SpecularManifoldSingleScatter);
+    MTS_PY_IMPORT(SpecularManifoldGlints);
 
     /// Register the variant-specific caster with the 'core_ext' module
     auto casters = (std::vector<void *> *) (py::capsule)(

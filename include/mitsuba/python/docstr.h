@@ -648,6 +648,27 @@ value: The BSDF value (multiplied by the cosine foreshortening factor
 when a non-delta component is sampled). A zero spectrum indicates that
 sampling failed.)doc";
 
+static const char *__doc_mitsuba_BSDF_slope =
+R"doc(Sometimes, BSDF models make use of a perturbed frame for shading
+computations (e.g. bump maps). This function returns this internal
+shading normal in slope space. In principle, the same could be
+computed from frame, but this more direct access is useful for glint
+rendering.
+
+Parameter ``uv``:
+    The texture coordinates where the slope should be evaluated)doc";
+
+static const char *__doc_mitsuba_BSDF_slope_derivative =
+R"doc(Sometimes, BSDF models make use of a perturbed frame for shading
+computations (e.g. bump maps). This function returns the UV
+derivatives of this internal shading normal in slope space. In
+principle, the same could be computed from frame_derivative, but this
+more direct access is useful for glint rendering.
+
+Parameter ``uv``:
+    The texture coordinates where the slope derivatives should be
+    evaluated)doc";
+
 static const char *__doc_mitsuba_BSDF_to_string = R"doc(Return a human-readable representation of the BSDF)doc";
 
 static const char *__doc_mitsuba_Bitmap =
@@ -1894,6 +1915,8 @@ static const char *__doc_mitsuba_EmitterInteraction_emitter = R"doc()doc";
 
 static const char *__doc_mitsuba_EmitterInteraction_is_area = R"doc()doc";
 
+static const char *__doc_mitsuba_EmitterInteraction_is_delta = R"doc()doc";
+
 static const char *__doc_mitsuba_EmitterInteraction_is_directional = R"doc()doc";
 
 static const char *__doc_mitsuba_EmitterInteraction_is_point = R"doc()doc";
@@ -3118,8 +3141,6 @@ static const char *__doc_mitsuba_ManifoldVertex_inv_lambda = R"doc()doc";
 static const char *__doc_mitsuba_ManifoldVertex_make_orthonormal = R"doc()doc";
 
 static const char *__doc_mitsuba_ManifoldVertex_n = R"doc()doc";
-
-static const char *__doc_mitsuba_ManifoldVertex_n_offset = R"doc()doc";
 
 static const char *__doc_mitsuba_ManifoldVertex_p = R"doc()doc";
 
@@ -4973,6 +4994,10 @@ static const char *__doc_mitsuba_SMSConfig_SMSConfig = R"doc()doc";
 
 static const char *__doc_mitsuba_SMSConfig_biased = R"doc()doc";
 
+static const char *__doc_mitsuba_SMSConfig_bounces = R"doc()doc";
+
+static const char *__doc_mitsuba_SMSConfig_bsdf_strategy_only = R"doc()doc";
+
 static const char *__doc_mitsuba_SMSConfig_halfvector_constraints = R"doc()doc";
 
 static const char *__doc_mitsuba_SMSConfig_max_iterations = R"doc()doc";
@@ -4980,6 +5005,8 @@ static const char *__doc_mitsuba_SMSConfig_max_iterations = R"doc()doc";
 static const char *__doc_mitsuba_SMSConfig_max_trials = R"doc()doc";
 
 static const char *__doc_mitsuba_SMSConfig_mnee_init = R"doc()doc";
+
+static const char *__doc_mitsuba_SMSConfig_sms_strategy_only = R"doc()doc";
 
 static const char *__doc_mitsuba_SMSConfig_solver_threshold = R"doc()doc";
 
@@ -5055,6 +5082,8 @@ static const char *__doc_mitsuba_SamplingIntegrator_cancel = R"doc()doc";
 static const char *__doc_mitsuba_SamplingIntegrator_class = R"doc()doc";
 
 static const char *__doc_mitsuba_SamplingIntegrator_m_block_size = R"doc(Size of (square) image blocks to render per core.)doc";
+
+static const char *__doc_mitsuba_SamplingIntegrator_m_glint_diff_scale_factor_clamp = R"doc(For glint rendering, clamp the ray-differential scale factor)doc";
 
 static const char *__doc_mitsuba_SamplingIntegrator_m_hide_emitters = R"doc(Flag for disabling direct visibility of emitters)doc";
 
@@ -5350,11 +5379,15 @@ static const char *__doc_mitsuba_Sensor_3 = R"doc()doc";
 
 static const char *__doc_mitsuba_Sensor_Sensor = R"doc()doc";
 
+static const char *__doc_mitsuba_Sensor_camera_to_world = R"doc()doc";
+
 static const char *__doc_mitsuba_Sensor_class = R"doc()doc";
 
 static const char *__doc_mitsuba_Sensor_film = R"doc(Return the Film instance associated with this sensor)doc";
 
 static const char *__doc_mitsuba_Sensor_film_2 = R"doc(Return the Film instance associated with this sensor (const))doc";
+
+static const char *__doc_mitsuba_Sensor_importance = R"doc(Sensor importance evaluation)doc";
 
 static const char *__doc_mitsuba_Sensor_m_aspect = R"doc()doc";
 
@@ -5410,6 +5443,8 @@ Returns:
     The sampled ray differential and (potentially spectrally varying)
     importance weights. The latter account for the difference between
     the sensor profile and the actual used sampling density function.)doc";
+
+static const char *__doc_mitsuba_Sensor_sample_to_camera = R"doc(Access to the internal transform matrices)doc";
 
 static const char *__doc_mitsuba_Sensor_sampler =
 R"doc(Return the sensor's sample generator
@@ -5625,6 +5660,10 @@ static const char *__doc_mitsuba_Shape_id = R"doc(Return a string identifier)doc
 
 static const char *__doc_mitsuba_Shape_interior_medium = R"doc(Return the medium that lies on the interior of this shape)doc";
 
+static const char *__doc_mitsuba_Shape_is_caustic_bouncer =
+R"doc(Is this shape a (multi-bounce) caustic bouncer (i.e. it can be an
+intermediate vertex of a longer chain)?)doc";
+
 static const char *__doc_mitsuba_Shape_is_caustic_caster_multi_scatter =
 R"doc(Is this shape a (multi-bounce) caustic caster for specular manifold
 sampling?)doc";
@@ -5646,6 +5685,8 @@ static const char *__doc_mitsuba_Shape_is_mesh = R"doc(Is this shape a triangle 
 static const char *__doc_mitsuba_Shape_is_sensor = R"doc(Is this shape also an area sensor?)doc";
 
 static const char *__doc_mitsuba_Shape_m_bsdf = R"doc()doc";
+
+static const char *__doc_mitsuba_Shape_m_caustic_bouncer = R"doc()doc";
 
 static const char *__doc_mitsuba_Shape_m_caustic_caster_multi = R"doc()doc";
 
@@ -5862,13 +5903,109 @@ case.)doc";
 
 static const char *__doc_mitsuba_SpecularManifoldGlints_SpecularManifoldGlints = R"doc(Initialize data structure)doc";
 
-static const char *__doc_mitsuba_SpecularManifoldGlints_class = R"doc()doc";
+static const char *__doc_mitsuba_SpecularManifoldGlints_compute_step = R"doc(Evaluate constraint function and compute the next step)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_evaluate_glint_contribution =
+R"doc(Evaluate throughput for a sampled glint position. Does not account for
+the (inverse) probability of sampling the glint, which needs to be
+estimated separately by repeatedly calling 'sample_path'.
+
+Parameter ``sensor_position``:
+    Point on the camera aperture / primary ray origin
+
+Parameter ``ei``:
+    Sampled emitter interaction
+
+Parameter ``si``:
+    Current shading point interaction.
+
+Parameter ``uv``:
+    UV position of the glint
+
+Returns:
+    Final contribution, involving generalized geometric term,
+    reflectance at the specular event, and emitter weight.)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_geometric_term =
+R"doc(Compute generlized geometric term between v0 and v2, via specular
+vertex v1)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_inside_parallelogram = R"doc(Test if point lies in parallelogram)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_inside_triangle = R"doc(Test if point lies in triangle)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_lean_pdf = R"doc(LEAN mapping directional sampling density used for glint MIS)doc";
 
 static const char *__doc_mitsuba_SpecularManifoldGlints_m_config = R"doc()doc";
 
 static const char *__doc_mitsuba_SpecularManifoldGlints_m_scene = R"doc()doc";
 
+static const char *__doc_mitsuba_SpecularManifoldGlints_mis_weight = R"doc(Multiple importance sampling power heuristic)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_newton_solver = R"doc(Newton solver to find admissable glint position in UV space)doc";
+
 static const char *__doc_mitsuba_SpecularManifoldGlints_print_statistics = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_sample_glint =
+R"doc(Sample "glint" contribution from a specular surface
+
+Parameter ``sensor_position``:
+    Point on the camera aperture / primary ray origin
+
+Parameter ``ei``:
+    Sampled emitter interaction
+
+Parameter ``si``:
+    Shading point interaction of the glinty surface
+
+Parameter ``sampler``:
+    Reference to sampler to use for RNG
+
+Parameter ``n_offset``:
+    (Optional) offset normal to use for during the Newton solver
+    steps. E.g. sampled from a microfacet distribution. Should be in
+    standard local coordinate system (Z-axis = up). This is relevant
+    only for rough/glossy events. (Default: [0, 0, 1])
+
+p_start: (Optionally) override the sampled initial position on the
+shape (Only useful for debugging or visualization purposes.)
+
+Returns:
+    A tuple (success, uv_final, uv_initial) consisting of
+
+success: Did the sampling produce a solution?
+
+uv_final: The resulting UV position (in case of success)
+
+uv_initial: The initial UV position, produced by uniformly sampling
+inside the pixel footprint. (Only useful for debugging or
+visualization purposes.))doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_specular_manifold_sampling =
+R"doc(Perform specular manifold sampling for glints, with parameters based
+on the current configuration.
+
+Internally performs MIS between SMS sampling and BSDF sampling on a
+high-frequency normal mapped material.
+
+Parameter ``sensor_position``:
+    Point on the camera aperture / primary ray origin
+
+Parameter ``si``:
+    Current (glinty) shading point interaction.
+
+Parameter ``sampler``:
+    Reference to the sampler to use for RNG
+
+Returns:
+    A tuple (contribution, bsdf_weight, bsdf_wo) consisting of
+
+contribution: Estimate of the glinty contribution at the shading point
+which is the result of MIS between SMS and BSDF sampling strategies.
+
+bsdf_weight: BSDF sampling weight produce)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_specular_reflectance = R"doc(Evalaute reflectance at specular interaction towards light source)doc";
 
 static const char *__doc_mitsuba_SpecularManifoldMultiScatter =
 R"doc(Datastructure handling specular manifold sampling in the multi-bounce
@@ -5876,13 +6013,110 @@ case.)doc";
 
 static const char *__doc_mitsuba_SpecularManifoldMultiScatter_SpecularManifoldMultiScatter = R"doc(Initialize data structure)doc";
 
-static const char *__doc_mitsuba_SpecularManifoldMultiScatter_class = R"doc()doc";
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_compute_step_anglediff =
+R"doc(Evaluate constraint and tangent step in the angle difference
+formulation)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_compute_step_halfvector = R"doc(Evaluate constraint and tangent step in the half-vector formulation)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_current_path = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_evaluate_path_contribution =
+R"doc(Evaluate throughput for a sampled path segment. Does not account for
+the (inverse) probability of sampling the path, which needs to be
+estimated separately bu repeatedly calling 'sample_path'.
+
+Parameter ``si``:
+    Current shading point interaction.
+
+Parameter ``ei``:
+    Sampled emitter interaction
+
+Returns:
+    Final contribution, involving generalized geometric term,
+    reflectance at the specular event, emitter weight, and visibility.)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_geometric_term =
+R"doc(Compute generlized geometric term between vx and vy, via multiple
+specular vertices)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_init = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_invert_tridiagonal_geo = R"doc(From the built-up tridiagonal block matrix, compute the geometric term)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_invert_tridiagonal_step = R"doc(From the built-up tridiagonal block matrix, compute the steps)doc";
 
 static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_config = R"doc()doc";
 
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_current_path = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_offset_normals = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_offset_normals_pdf = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_proposed_path = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_proposed_positions = R"doc()doc";
+
 static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_scene = R"doc()doc";
 
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_m_seed_path = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_newton_solver = R"doc(Newton solver to find admissable path segment)doc";
+
 static const char *__doc_mitsuba_SpecularManifoldMultiScatter_print_statistics = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_reproject = R"doc(Reproject proposed offset positions back to surfaces)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_sample_path =
+R"doc(Sample one path via specular manifold sampling. The (inverse) pdf of
+this process can be estimated (either in unbiased or biased way) by
+repeatedly calling this method, compare with Algorithm 2 in the paper.
+
+Compared to the one-bounce implementation, there is currently no
+support for the "two-stage" solver for normal maps (though it would be
+compatible in principle).
+
+Parameter ``shape``:
+    Specular shape to start to use in the path.
+
+Parameter ``si``:
+    Current shading point interaction. This will be the start of the
+    sampled path segment.
+
+Parameter ``ei``:
+    Sampled emitter interaction
+
+Parameter ``sampler``:
+    Reference to the sampler to use for RNG
+
+Parameter ``first_path``:
+    Is this the first path of one estimate? If so we need to also
+    sample offset normals whenever we hit a glossy object.
+
+p_start: (Optionally) override the sampled initial position on the
+shape (Only useful for debugging or visualization purposes.)
+
+Returns:
+    Did the sampling succeed?)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_sample_seed_path = R"doc(Sample initial seed path, to be corrected with the Newton solver)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_specular_manifold_sampling =
+R"doc(Perform specular manifold sampling, with parameters based on the
+current configuration.
+
+Parameter ``si``:
+    Current shading point interaction.
+
+Parameter ``sampler``:
+    Reference to the sampler to use for RNG
+
+Returns:
+    An estimate of the (single-bounce) caustic path contribution at
+    the desired shading point.)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldMultiScatter_specular_reflectance = R"doc(Evalaute reflectance at specular interaction towards light source)doc";
 
 static const char *__doc_mitsuba_SpecularManifoldSingleScatter =
 R"doc(Datastructure handling specular manifold sampling in the one-bounce

@@ -254,6 +254,70 @@ public:
         return std::make_pair(ray, wav_weight);
     }
 
+    Float importance(const Point3f &p, const Vector3f &d, Mask active) const override {
+        /* How is this derived? Imagine a hypothetical image plane at a
+           distance of d=1 away from the pinhole in camera space.
+
+           Then the visible rectangular portion of the plane has the area
+
+              A = (2 * tan(0.5 * xfov in radians))^2 / aspect
+
+           Since we allow crop regions, the actual visible area is
+           potentially reduced:
+
+              A' = A * (cropX / filmX) * (cropY / filmY)
+
+           Perspective transformations of such aligned rectangles produce
+           an equivalent scaled (but otherwise undistorted) rectangle
+           in screen space. This means that a strategy, which uniformly
+           generates samples in screen space has an associated area
+           density of 1/A' on this rectangle.
+
+           To compute the solid angle density of a sampled point P on
+           the rectangle, we can apply the usual measure conversion term:
+
+              d_omega = 1/A' * distance(P, origin)^2 / cos(theta)
+
+           where theta is the angle that the unit direction vector from
+           the origin to P makes with the rectangle. Since
+
+              distance(P, origin)^2 = Px^2 + Py^2 + 1
+
+           and
+
+              cos(theta) = 1/sqrt(Px^2 + Py^2 + 1),
+
+           we have
+
+              d_omega = 1 / (A' * cos^3(theta))
+        */
+
+        Float cos_theta = Frame3f::cos_theta(d);
+
+        // Check if the direction points behind the camera
+        active &= cos_theta > 0.f;
+
+        // Compute the position on the plane at distance 1
+        Float inv_cos_theta = rcp(cos_theta);
+
+        // Check if the associated pixel is visible
+        Point3f scr = m_camera_to_sample * (p + d * (m_focus_distance*inv_cos_theta));
+        active &= (scr.x() >= 0.f && scr.x() <= 1.f &&
+                   scr.y() >= 0.f && scr.y() <= 1.f);
+
+        return select(active,
+                      m_normalization * inv_cos_theta * inv_cos_theta * inv_cos_theta,
+                      0.f);
+    }
+
+    Transform4f sample_to_camera() const override {
+        return m_sample_to_camera;
+    }
+
+    Transform4f camera_to_world(Float time, Mask active) const override {
+        return m_world_transform->eval(time, active);
+    }
+
     ScalarBoundingBox3f bbox() const override {
         return m_world_transform->translation_bounds();
     }

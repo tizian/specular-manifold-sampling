@@ -1,5 +1,7 @@
 #include <mitsuba/render/manifold.h>
 #include <mitsuba/render/manifold_ss.h>
+#include <mitsuba/render/manifold_ms.h>
+#include <mitsuba/render/manifold_glints.h>
 #include <mitsuba/render/scene.h>
 #include <mitsuba/python/python.h>
 
@@ -55,7 +57,7 @@ MTS_PY_EXPORT(SpecularManifold) {
 
     MTS_PY_STRUCT(SpecularManifold)
         .def_static("sample_emitter_interaction", &SpecularManifold::sample_emitter_interaction,
-            "scene"_a, "si"_a, "sampler"_a, "multi_scatter"_a=false)
+            "si"_a, "emitters"_a, "sampler"_a)
         .def_static("emitter_interaction_to_vertex", &SpecularManifold::emitter_interaction_to_vertex,
             "scene"_a, "y"_a, "v"_a, "time"_a, "wavelengths"_a)
 
@@ -81,4 +83,18 @@ MTS_PY_EXPORT(SpecularManifoldSingleScatter) {
             "v0p"_a, "v1"_a, "v2p"_a, "n_offset"_a=Vector3f(0.f, 0.f, 1.f))
         .def("compute_step_anglediff", &SpecularManifoldSingleScatter::compute_step_anglediff,
             "v0p"_a, "v1"_a, "v2p"_a, "n_offset"_a=Vector3f(0.f, 0.f, 1.f));
+}
+
+MTS_PY_EXPORT(SpecularManifoldGlints) {
+    MTS_PY_IMPORT_TYPES()
+    using SpecularManifoldGlints = SpecularManifoldGlints<Float, Spectrum>;
+
+    MTS_PY_STRUCT(SpecularManifoldGlints)
+        .def(py::init<const Scene *, const SMSConfig &>(),
+            "scene"_a, "config"_a)
+        .def("specular_manifold_sampling", &SpecularManifoldGlints::specular_manifold_sampling,
+             "sensor_position"_a, "si"_a, "sampler"_a)
+        .def("sample_glint", &SpecularManifoldGlints::sample_glint,
+            "sensor_position"_a, "ei"_a, "si"_a, "sampler"_a,
+            "n_offset"_a=Vector3f(0.f, 0.f, 1.f), "xi_start"_a=Point2f(1.f));
 }

@@ -9,18 +9,23 @@
 NAMESPACE_BEGIN(mitsuba)
 
 struct SMSConfig {
-    bool biased    = false;                 // Switch from unbiased to biased SMS?
-    bool twostage  = false;                 // Use two-stage solver for normal maps?
-    bool halfvector_constraints = false;    // Switch back to original half-vector based constraints?
-    bool mnee_init = false;                 // Use deterministic MNEE initialization instead?
+    bool biased    = false;                     // Switch from unbiased to biased SMS?
+    bool twostage  = false;                     // Use two-stage solver for normal maps?
+    bool halfvector_constraints = false;        // Switch back to original half-vector based constraints?
+    bool mnee_init = false;                     // Use deterministic MNEE initialization instead?
 
-    float step_scale = 1.f;                 // Scale step sizes inside Newton solver (mostly for visualizations)
-    size_t max_iterations = 20;             // Maxiumum number of allowed iterations of the Newton solver
-    float solver_threshold     = 1e-5f;     // Newton solver stopping criterion
-    float uniqueness_threshold = 1e-4f;     // Threshold to distinguish unique solution paths (for pdf estimation)
-    int max_trials = -1;                    // Trial set size M (for biased SMS), or upper limit of Bernoulli trials (for unbiased SMS)
+    float step_scale = 1.f;                     // Scale step sizes inside Newton solver (mostly for visualizations)
+    size_t max_iterations = 20;                 // Maxiumum number of allowed iterations of the Newton solver
+    float solver_threshold     = 1e-5f;         // Newton solver stopping criterion
+    float uniqueness_threshold = 1e-4f;         // Threshold to distinguish unique solution paths (for probability estimation)
+    int max_trials = -1;                        // Trial set size M (for biased SMS), or upper limit of Bernoulli trials (for unbiased SMS)
 
-    int bounces = 1;                        // For multi-bounce implementation, what path length should be sampled?
+    // For multi-bounce implementation
+    int bounces = 1;                            // What path length should be sampled?
+
+    // For glint implementation
+    bool bsdf_strategy_only = false;            // Disable MIS and only use the BSDF strategy
+    bool sms_strategy_only  = false;            // Disable MIS and only use the SMS strategy
 
     SMSConfig() {}
 
@@ -166,6 +171,11 @@ struct EmitterInteraction {
         return has_flag(emitter->flags(), EmitterFlags::Surface);
     }
 
+    bool is_delta() const {
+        return has_flag(emitter->flags(), EmitterFlags::DeltaPosition) ||
+               has_flag(emitter->flags(), EmitterFlags::DeltaDirection);
+    }
+
     std::string to_string() const {
         std::ostringstream oss;
         oss << "EmitterInteraction[" << std::endl
@@ -183,7 +193,7 @@ template <typename Float_, typename Spectrum_>
 struct SpecularManifold {
     using Float    = Float_;
     using Spectrum = Spectrum_;
-    MTS_IMPORT_TYPES(Sampler, Scene)
+    MTS_IMPORT_TYPES(Sampler, Scene, Emitter)
     using EmitterPtr         = typename RenderAliases::EmitterPtr;
     using ShapePtr           = typename RenderAliases::ShapePtr;
     using ManifoldVertex     = ManifoldVertex<Float, Spectrum>;
@@ -191,14 +201,11 @@ struct SpecularManifold {
 
     /// Sample emitter interaction for specular manifold sampling
     static EmitterInteraction
-    sample_emitter_interaction(const Scene *scene,
-                               const SurfaceInteraction3f &si,
-                               ref<Sampler> sampler,
-                               bool multi_scatter=false) {
+    sample_emitter_interaction(const SurfaceInteraction3f &si,
+                               const std::vector<ref<Emitter>> emitters,
+                               ref<Sampler> sampler) {
         EmitterInteraction ei;
         Spectrum spec = 0.f;
-        const auto emitters = multi_scatter ? scene->caustic_emitters_multi_scatter()
-                                            : scene->caustic_emitters_single_scatter();
 
         if (unlikely(emitters.empty())) {
             Log(Warn, "Specular manifold sampling: no emitter is marked!");
@@ -209,11 +216,11 @@ struct SpecularManifold {
         Float emitter_sample = sampler->next_1d();
         Float emitter_pdf = 1.f / emitters.size();
         UInt32 index = min(UInt32(emitter_sample * (ScalarFloat) emitters.size()), (uint32_t) emitters.size()-1);
-        EmitterPtr emitter = gather<EmitterPtr>(emitters.data(), index);
+        const EmitterPtr emitter = gather<EmitterPtr>(emitters.data(), index);
         ei.emitter = emitter;
 
         if (ei.is_area()) {
-            ShapePtr shape = emitter->shape();
+            const ShapePtr shape = emitter->shape();
             PositionSample3f ps = shape->sample_position(si.time, sampler->next_2d());
             if (ps.pdf > 0) {
                 SurfaceInteraction3f si_emitter;
@@ -299,11 +306,11 @@ struct SpecularManifold {
     emitter_interaction(const Scene *scene, const SurfaceInteraction3f &si, const SurfaceInteraction3f &si_emitter) {
         EmitterInteraction ei;
 
-        EmitterPtr emitter = si_emitter.emitter(scene);
+        const EmitterPtr emitter = si_emitter.emitter(scene);
         ei.emitter = emitter;
 
         // Is either area light or infinite light, as it needs to be hit explicitly in the scene.
-        ShapePtr shape = emitter->shape();
+        const ShapePtr shape = emitter->shape();
         if (shape) {
             ei.p = si_emitter.p;
             ei.n = si_emitter.n;

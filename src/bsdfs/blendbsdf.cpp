@@ -178,6 +178,15 @@ public:
         return m_nested_bsdf[0]->lean(si, active);
     }
 
+    Point2f slope(const Point2f &uv, Mask active) const override {
+        return m_nested_bsdf[0]->slope(uv, active);
+    }
+
+    std::pair<Vector2f, Vector2f>
+    slope_derivative(const Point2f &uv, Mask active) const override {
+        return m_nested_bsdf[0]->slope_derivative(uv, active);
+    }
+
     Float roughness() const override {
         return m_nested_bsdf[0]->roughness();
     }

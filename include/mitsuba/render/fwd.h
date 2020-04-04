@@ -96,6 +96,7 @@ template <typename Float_, typename Spectrum_> struct RenderAliases {
     using PhaseFunctionPtr       = replace_scalar_t<Float, const PhaseFunction *>;
     using ShapePtr               = replace_scalar_t<Float, const Shape *>;
     using EmitterPtr             = replace_scalar_t<Float, const Emitter *>;
+    using SensorPtr              = replace_scalar_t<Float, const Sensor *>;
 };
 
 #define MTS_IMPORT_RENDER_BASIC_TYPES()                                                            \

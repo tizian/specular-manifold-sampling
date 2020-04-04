@@ -37,6 +37,19 @@ BSDF<Float, Spectrum>::lean(const SurfaceInteraction3f & /* si */,
     return { 0.f, 0.f };
 }
 
+MTS_VARIANT typename BSDF<Float, Spectrum>::Point2f
+BSDF<Float, Spectrum>::slope(const Point2f & /* uv */,
+                             Mask /* active */) const {
+    return Point2f(0.f);
+}
+
+MTS_VARIANT std::pair<typename BSDF<Float, Spectrum>::Vector2f,
+                      typename BSDF<Float, Spectrum>::Vector2f>
+BSDF<Float, Spectrum>::slope_derivative(const Point2f & /* uv */,
+                                        Mask /* active */) const {
+    return { Vector2f(0.f), Vector2f(0.f) };
+}
+
 MTS_VARIANT Float BSDF<Float, Spectrum>::roughness() const {
     return math::Infinity<Float>;
 }
