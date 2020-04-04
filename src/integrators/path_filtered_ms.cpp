@@ -92,6 +92,7 @@ public:
                 // --------------------- Emitter sampling ---------------------
 
                 BSDFContext ctx;
+                ctx.sampler = sampler;
                 BSDFPtr bsdf = si.bsdf(ray);
 
                 if (has_flag(bsdf->flags(), BSDFFlags::Smooth)) {

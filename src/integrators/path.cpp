@@ -154,6 +154,7 @@ public:
             // --------------------- Emitter sampling ---------------------
 
             BSDFContext ctx;
+            ctx.sampler = sampler;
             BSDFPtr bsdf = si.bsdf(ray);
             Mask active_e = active && has_flag(bsdf->flags(), BSDFFlags::Smooth);
 

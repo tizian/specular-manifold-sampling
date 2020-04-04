@@ -126,6 +126,7 @@ public:
                 // --------------------- Emitter sampling ---------------------
 
                 BSDFContext ctx;
+                ctx.sampler = sampler;
                 BSDFPtr bsdf = si.bsdf(ray);
 
                 /* As usual, emitter sampling only makes sense on Smooth BSDFs

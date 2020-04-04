@@ -160,6 +160,9 @@ struct MTS_EXPORT_RENDER BSDFContext {
     /// Integer value of requested BSDF component index to be sampled/evaluated.
     uint32_t component = (uint32_t) -1;
 
+    /// Pointer to the sampler required for some BSDF models
+    void *sampler = nullptr;
+
     //! @}
     // =============================================================
 

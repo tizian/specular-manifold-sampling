@@ -16,6 +16,7 @@ add_plugin(twosided        twosided.cpp)
 add_plugin(polarizer       polarizer.cpp)
 add_plugin(retarder        retarder.cpp)
 add_plugin(normalmap       normalmap.cpp)
+add_plugin(glints_yan16    glints_yan16.cpp)
 
 # Register the test directory
 add_tests(${CMAKE_CURRENT_SOURCE_DIR}/tests)

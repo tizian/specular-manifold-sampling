@@ -20,3 +20,19 @@ endif()
 if (MSVC)
   set_property(TARGET mitsuba PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)dist")
 endif()
+
+include_directories(
+  ${OPENEXR_INCLUDE_DIRS}
+)
+
+add_executable(normalmap_to_flakes normalmap_to_flakes.cpp)
+target_link_libraries(normalmap_to_flakes PRIVATE IlmImf)
+add_dist(normalmap_to_flakes)
+
+if (APPLE)
+  set_target_properties(normalmap_to_flakes PROPERTIES INSTALL_RPATH "@executable_path")
+endif()
+
+if (MSVC)
+  set_property(TARGET normalmap_to_flakes PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)dist")
+endif()

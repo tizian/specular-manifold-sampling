@@ -371,6 +371,8 @@ R"doc(Reverse the direction of light transport in the record
 This updates the transport mode (radiance to importance and vice
 versa).)doc";
 
+static const char *__doc_mitsuba_BSDFContext_sampler = R"doc(Pointer to the sampler required for some BSDF models)doc";
+
 static const char *__doc_mitsuba_BSDFContext_type_mask = R"doc()doc";
 
 static const char *__doc_mitsuba_BSDFFlags =
@@ -2367,6 +2369,98 @@ static const char *__doc_mitsuba_FilterBoundaryCondition_Repeat = R"doc(Assume t
 
 static const char *__doc_mitsuba_FilterBoundaryCondition_Zero = R"doc(Assume that the input function is zero outside of the defined domain)doc";
 
+static const char *__doc_mitsuba_Flake = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_Flake = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_Flake_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_aa = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_area = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_bb = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_contributionToNdf = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_getBoundingBox = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_getNormal = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_index = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_n0 = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_shape = R"doc()doc";
+
+static const char *__doc_mitsuba_Flake_u0 = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_FlakesTree = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_Node = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_Node_aa = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_Node_bb = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_Node_flakes = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_Node_left = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_Node_right = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_buildFlakesTree = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_buildSTGrid = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_buildUVGrid = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_configure = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_deleteFlakesTree = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_initialize = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_intersectAABB = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_m_flakes = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_m_intrinsicRoughness = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_m_resolutionU = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_m_resolutionV = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_max4 = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_min4 = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_queryFlakes = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_queryFlakesEval = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_queryFlakesSample = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_readFlakesFile = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_stGrid = R"doc()doc";
+
+static const char *__doc_mitsuba_FlakesTree_uvGrid = R"doc()doc";
+
+static const char *__doc_mitsuba_FlatFlake = R"doc()doc";
+
+static const char *__doc_mitsuba_FlatFlake_FlatFlake = R"doc()doc";
+
+static const char *__doc_mitsuba_FlatFlake_FlatFlake_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_FlatFlake_contributionToNdf = R"doc()doc";
+
+static const char *__doc_mitsuba_FlatFlake_getBoundingBox = R"doc()doc";
+
+static const char *__doc_mitsuba_FlatFlake_getNormal = R"doc()doc";
+
 static const char *__doc_mitsuba_Formatter =
 R"doc(Abstract interface for converting log information into a human-
 readable format)doc";
@@ -2993,6 +3087,28 @@ static const char *__doc_mitsuba_LEAN_sigma = R"doc()doc";
 static const char *__doc_mitsuba_LEAN_sigma_std = R"doc()doc";
 
 static const char *__doc_mitsuba_LEAN_vndf = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_J = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_LinearFlake = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_LinearFlake_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_addCoeffs = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_contributionToNdf = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_getBoundingBox = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_getC = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_getNormal = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_intExp = R"doc()doc";
+
+static const char *__doc_mitsuba_LinearFlake_intExp_2 = R"doc()doc";
 
 static const char *__doc_mitsuba_LogLevel = R"doc(Available Log message types)doc";
 
@@ -8551,6 +8667,10 @@ eta_ti Reciprocal of the relative index of refraction in the direction
 of travel. In the real-valued case, this also happens to be equal to
 the scale factor that must be applied to the X and Y component of the
 refracted direction.)doc";
+
+static const char *__doc_mitsuba_g = R"doc()doc";
+
+static const char *__doc_mitsuba_g_2 = R"doc()doc";
 
 static const char *__doc_mitsuba_has_flag = R"doc()doc";
 

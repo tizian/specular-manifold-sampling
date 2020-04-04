@@ -91,6 +91,7 @@ public:
                 // --------------------- Emitter sampling ---------------------
 
                 BSDFContext ctx;
+                ctx.sampler = sampler;
                 BSDFPtr bsdf = si.bsdf(ray);
 
                 /* To account for exactly the same light paths as in the version

@@ -194,6 +194,7 @@ public:
             if (any_or<true>(active_surface)) {
                 // --------------------- Emitter sampling ---------------------
                 BSDFContext ctx;
+                ctx.sampler = sampler;
                 BSDFPtr bsdf  = si.bsdf(ray);
                 Mask active_e = active_surface && has_flag(bsdf->flags(), BSDFFlags::Smooth) && (depth + 1 < (uint32_t) m_max_depth);
 
