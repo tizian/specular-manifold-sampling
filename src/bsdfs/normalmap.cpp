@@ -55,10 +55,10 @@ public:
             std::tie(m_eta, m_k) = complex_ior_from_file<Spectrum, Texture>(props.string("lean_fallback_material", "none"));
         }
 
-        parameters_changed();
+        parameters_changed({});
     }
 
-    void parameters_changed() override {
+    void parameters_changed(const std::vector<std::string> &/*keys*/) override {
         m_components.clear();
         for (size_t i = 0; i < m_nested_bsdf->component_count(); ++i)
             m_components.push_back(m_nested_bsdf->flags(i));

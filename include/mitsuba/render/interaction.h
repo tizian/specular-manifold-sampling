@@ -113,6 +113,9 @@ struct SurfaceInteraction : Interaction<Float_, Spectrum_> {
     /// Position partials wrt. the UV parameterization
     Vector3f dp_du, dp_dv;
 
+    /// Position partials wrt. changes in screen space
+    Vector3f dp_dx, dp_dy;
+
     /// UV partials wrt. changes in screen-space
     Vector2f duv_dx, duv_dy;
 
@@ -220,8 +223,8 @@ struct SurfaceInteraction : Interaction<Float_, Spectrum_> {
               t_y = (d - dot(n, ray.o_y)) / dot(n, ray.d_y);
 
         // Corresponding positions near the surface
-        Vector3f dp_dx = fmadd(ray.d_x, t_x, ray.o_x) - p,
-                 dp_dy = fmadd(ray.d_y, t_y, ray.o_y) - p;
+        dp_dx = fmadd(ray.d_x, t_x, ray.o_x) - p,
+        dp_dy = fmadd(ray.d_y, t_y, ray.o_y) - p;
 
         // Solve a least squares problem to turn this into UV coordinates
         Float a00 = dot(dp_du, dp_du),
@@ -342,7 +345,7 @@ struct SurfaceInteraction : Interaction<Float_, Spectrum_> {
 
     ENOKI_DERIVED_STRUCT(SurfaceInteraction, Base,
         ENOKI_BASE_FIELDS(t, time, wavelengths, p),
-        ENOKI_DERIVED_FIELDS(shape, uv, n, sh_frame, dp_du, dp_dv,
+        ENOKI_DERIVED_FIELDS(shape, uv, n, sh_frame, dp_du, dp_dv, dp_dx, dp_dy,
                              duv_dx, duv_dy, wi, prim_index, instance)
     )
 };
@@ -486,8 +489,8 @@ NAMESPACE_END(mitsuba)
 ENOKI_STRUCT_SUPPORT(mitsuba::Interaction, t, time, wavelengths, p)
 
 ENOKI_STRUCT_SUPPORT(mitsuba::SurfaceInteraction, t, time, wavelengths, p,
-                     shape, uv, n, sh_frame, dp_du, dp_dv, duv_dx, duv_dy, wi,
-                     prim_index, instance)
+                     shape, uv, n, sh_frame, dp_du, dp_dv, dp_dx, dp_dy,
+                     duv_dx, duv_dy, wi, prim_index, instance)
 
 ENOKI_STRUCT_SUPPORT(mitsuba::MediumInteraction, t, time, wavelengths, p,
                      medium, sh_frame, wi, sigma_s, sigma_n, sigma_t, combined_extinction, mint)

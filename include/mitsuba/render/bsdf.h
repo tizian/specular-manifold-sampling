@@ -485,6 +485,16 @@ public:
     virtual Complex<Spectrum> ior(const SurfaceInteraction3f &si,
                                   Mask active = true) const;
 
+    /**
+     * \brief Return lobe weight for first (potentially glinty) BSDF component.
+     *
+     * This is only necessary to blend the glints with another BSDF (using
+     * 'blendbsdf') where the glinty component is evaluated separately inside
+     * an integrator.
+     */
+    virtual Float glint_component_weight(const SurfaceInteraction3f &si,
+                                         Mask active = true) const;
+
     // -----------------------------------------------------------------------
     //! @{ \name BSDF property accessors (components, flags, etc)
     // -----------------------------------------------------------------------

@@ -682,11 +682,29 @@ Mesh<Float, Spectrum>::normal_derivative(const SurfaceInteraction3f &si, bool sh
         return { zero<Vector3f>(), zero<Vector3f>() };
 
     auto fi = face_indices(si.prim_index, active);
-    Point3f b = barycentric_coordinates(si, active);
+
+    Point3f p0 = vertex_position(fi[0], active),
+            p1 = vertex_position(fi[1], active),
+            p2 = vertex_position(fi[2], active);
 
     Normal3f n0 = vertex_normal(fi[0], active),
              n1 = vertex_normal(fi[1], active),
              n2 = vertex_normal(fi[2], active);
+
+    Vector3f rel = si.p - p0,
+             du  = p1 - p0,
+             dv  = p2 - p0;
+
+    /* Solve a least squares problem to determine
+       the UV coordinates within the current triangle */
+    Float b1  = dot(du, rel), b2 = dot(dv, rel),
+          a11 = dot(du, du), a12 = dot(du, dv),
+          a22 = dot(dv, dv),
+          inv_det = rcp(a11 * a22 - a12 * a12);
+
+    Float u = fmsub (a22, b1, a12 * b2) * inv_det,
+          v = fnmadd(a12, b1, a11 * b2) * inv_det,
+          w = 1.f - u - v;
 
     /* Now compute the derivative of "normalize(u*n1 + v*n2 + (1-u-v)*n0)"
        with respect to [u, v] in the local triangle parameterization.
@@ -694,8 +712,7 @@ Mesh<Float, Spectrum>::normal_derivative(const SurfaceInteraction3f &si, bool sh
        Since d/du [f(u)/|f(u)|] = [d/du f(u)]/|f(u)|
          - f(u)/|f(u)|^3 <f(u), d/du f(u)>, this results in
     */
-
-    Normal3f N(b[0] * n1 + b[1] * n2 + b[2] * n0);
+    Normal3f N(u * n1 + v * n2 + w * n0);
     Float il = rsqrt(squared_norm(N));
     N *= il;
 

@@ -17,5 +17,8 @@ add_plugin(path_filtered_ms path_filtered_ms.cpp)
 
 add_plugin(path_sms_glints path_sms_glints.cpp)
 
+add_plugin(path_sms_teaser path_sms_teaser.cpp)
+add_plugin(path_filtered_teaser path_filtered_teaser.cpp)
+
 # Register the test directory
 add_tests(${CMAKE_CURRENT_SOURCE_DIR}/tests)

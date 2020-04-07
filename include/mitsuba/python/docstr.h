@@ -533,6 +533,13 @@ the underlying shape.
 Some BSDFs (e.g. normal maps) also expose a smoothing parameter (in
 [0, 1]) implemented e.g. via mipmapping.)doc";
 
+static const char *__doc_mitsuba_BSDF_glint_component_weight =
+R"doc(Return lobe weight for first (potentially glinty) BSDF component.
+
+This is only necessary to blend the glints with another BSDF (using
+'blendbsdf') where the glinty component is evaluated separately inside
+an integrator.)doc";
+
 static const char *__doc_mitsuba_BSDF_id = R"doc(Return a string identifier)doc";
 
 static const char *__doc_mitsuba_BSDF_ior =
@@ -6808,6 +6815,10 @@ static const char *__doc_mitsuba_SurfaceInteraction_compute_partials = R"doc(Com
 static const char *__doc_mitsuba_SurfaceInteraction_dp_du = R"doc(Position partials wrt. the UV parameterization)doc";
 
 static const char *__doc_mitsuba_SurfaceInteraction_dp_dv = R"doc(Position partials wrt. the UV parameterization)doc";
+
+static const char *__doc_mitsuba_SurfaceInteraction_dp_dx = R"doc(Position partials wrt. changes in screen space)doc";
+
+static const char *__doc_mitsuba_SurfaceInteraction_dp_dy = R"doc(Position partials wrt. changes in screen space)doc";
 
 static const char *__doc_mitsuba_SurfaceInteraction_duv_dx = R"doc(UV partials wrt. changes in screen-space)doc";
 

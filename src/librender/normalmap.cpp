@@ -5,6 +5,8 @@
 NAMESPACE_BEGIN(mitsuba)
 
 MTS_VARIANT Normalmap<Float, Spectrum>::Normalmap(const std::string &filename) {
+    using ReconstructionFilter = mitsuba::ReconstructionFilter<Float, Color<Float, 3>>;
+
     m_filename = filename;
 
     ref<Bitmap> normalmap;

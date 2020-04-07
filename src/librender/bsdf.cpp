@@ -59,6 +59,11 @@ MTS_VARIANT Complex<Spectrum> BSDF<Float, Spectrum>::ior(const SurfaceInteractio
     return {0.f, 1.f};
 }
 
+MTS_VARIANT Float BSDF<Float, Spectrum>::glint_component_weight(const SurfaceInteraction3f & /* si */,
+                                                                Mask /* active */) const {
+    return 1.f;
+}
+
 MTS_VARIANT std::string BSDF<Float, Spectrum>::id() const { return m_id; }
 
 template <typename Index>

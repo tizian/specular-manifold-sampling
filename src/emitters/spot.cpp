@@ -162,6 +162,7 @@ public:
 
     Spectrum eval(const SurfaceInteraction3f &, Mask) const override { return 0.f; }
 
+
     ScalarBoundingBox3f bbox() const override {
         return m_world_transform->translation_bounds();
     }

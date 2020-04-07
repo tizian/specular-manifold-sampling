@@ -13,7 +13,7 @@ NAMESPACE_BEGIN(mitsuba)
 template <typename Float, typename Spectrum>
 class MTS_EXPORT_RENDER Normalmap : public Object {
 public:
-    MTS_IMPORT_TYPES(ReconstructionFilter)
+    MTS_IMPORT_RENDER_BASIC_TYPES()
 
     // Optionally switch to finite differences to compute the texture derivatives
     // #define NORMAL_MAP_FINITE_DIFFERENCES

@@ -195,6 +195,12 @@ public:
         return m_nested_bsdf[0]->ior(si, active);
     }
 
+    Float glint_component_weight(const SurfaceInteraction3f &si,
+                                 Mask active) const override {
+        Float weight = eval_weight(si, active);
+        return 1.f - weight;
+    }
+
     MTS_INLINE Float eval_weight(const SurfaceInteraction3f &si, const Mask &active) const {
         return clamp(m_weight->eval_1(si, active), 0.f, 1.f);
     }
