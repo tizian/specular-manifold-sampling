@@ -18,13 +18,12 @@ MTS_VARIANT std::atomic<int> SpecularManifoldGlints<Float, Spectrum>::stats_bern
 MTS_VARIANT std::atomic<int> SpecularManifoldGlints<Float, Spectrum>::stats_bernoulli_trial_iterations(0);
 MTS_VARIANT std::atomic<int> SpecularManifoldGlints<Float, Spectrum>::stats_bernoulli_trial_iterations_max(0);
 
-MTS_VARIANT SpecularManifoldGlints<Float, Spectrum>::SpecularManifoldGlints(
-    const Scene *scene, const SMSConfig &config) {
+MTS_VARIANT void
+SpecularManifoldGlints<Float, Spectrum>::init(const Scene *scene,
+                                              const SMSConfig &config) {
     m_scene = scene;
     m_config = config;
 }
-
-MTS_VARIANT SpecularManifoldGlints<Float, Spectrum>::~SpecularManifoldGlints() {}
 
 MTS_VARIANT Spectrum
 SpecularManifoldGlints<Float, Spectrum>::specular_manifold_sampling(const Point3f &sensor_position,
@@ -526,7 +525,6 @@ SpecularManifoldGlints<Float, Spectrum>::geometric_term(const ManifoldVertex &v0
         Matrix2f sol0 = -tmp * sol1;
 
         G = abs(det(-sol0));
-        G /= abs_dot(wi, v0.n); // Cancel out cosine term that will be added during BSDF evaluation
     } else {
         // Invert single 2x2 matrix
         Float determinant = det(dc1_dx1);

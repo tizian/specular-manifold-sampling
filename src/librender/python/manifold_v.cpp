@@ -90,7 +90,8 @@ MTS_PY_EXPORT(SpecularManifoldGlints) {
     using SpecularManifoldGlints = SpecularManifoldGlints<Float, Spectrum>;
 
     MTS_PY_STRUCT(SpecularManifoldGlints)
-        .def(py::init<const Scene *, const SMSConfig &>(),
+        .def(py::init<>())
+        .def("init", &SpecularManifoldGlints::init,
             "scene"_a, "config"_a)
         .def("specular_manifold_sampling", &SpecularManifoldGlints::specular_manifold_sampling,
              "sensor_position"_a, "si"_a, "sampler"_a)

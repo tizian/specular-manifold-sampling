@@ -347,6 +347,11 @@ public:
         return m_nested_bsdf->ior(si, active);
     }
 
+    std::tuple<const Float *, size_t, Float>
+    lean_pointer() const override {
+        return std::make_tuple(m_normalmap->lean_data(), m_normalmap->resolution(0), m_tiles);
+    }
+
     std::string to_string() const override {
         std::ostringstream oss;
         oss << "Normalmap[" << std::endl

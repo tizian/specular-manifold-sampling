@@ -64,6 +64,12 @@ MTS_VARIANT Float BSDF<Float, Spectrum>::glint_component_weight(const SurfaceInt
     return 1.f;
 }
 
+MTS_VARIANT std::tuple<const Float *, size_t, Float>
+BSDF<Float, Spectrum>::lean_pointer() const {
+    Throw("Vectorized glints is trying to access LEAN pointer for non-normalmap BSDF!");
+    return std::make_tuple(nullptr, 0, 0.f);
+}
+
 MTS_VARIANT std::string BSDF<Float, Spectrum>::id() const { return m_id; }
 
 template <typename Index>

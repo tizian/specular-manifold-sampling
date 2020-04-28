@@ -53,6 +53,7 @@ public:
     using SpecularManifoldGlints        = SpecularManifoldGlints<Float, Spectrum>;
 
     static inline ThreadLocal<SpecularManifoldMultiScatter> tl_manifold_ms{};
+    static inline ThreadLocal<SpecularManifoldGlints>       tl_manifold_glints{};
 
     TeaserSMSPathIntegrator(const Properties &props) : Base(props) {
 
@@ -302,12 +303,14 @@ public:
                                 ref<Sampler> sampler) const {
         ScopedPhase scope_phase(ProfilerPhase::SMSGlints);
 
+        auto &mf_glints = (SpecularManifoldGlints &)tl_manifold_glints;
+        mf_glints.init(scene, m_sms_config_glints);
+
         if (unlikely(!si.is_valid() || !si.shape->is_glinty())) {
             return 0.f;
         }
 
         Spectrum result(0.f);
-        SpecularManifoldGlints mf_glints(scene, m_sms_config_glints);
 
         // Sample emitter interaction
         EmitterInteraction ei = SpecularManifold::sample_emitter_interaction(si, scene->emitters(), sampler);

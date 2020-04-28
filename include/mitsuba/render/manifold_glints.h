@@ -4,7 +4,7 @@
 
 NAMESPACE_BEGIN(mitsuba)
 
-/// Datastructure handling specular manifold sampling in the multi-bounce case.
+/// Datastructure handling specular manifold sampling in the glints case.
 template <typename Float, typename Spectrum>
 class MTS_EXPORT_RENDER SpecularManifoldGlints {
 public:
@@ -18,13 +18,14 @@ public:
     using SpecularManifold   = SpecularManifold<Float, Spectrum>;
 
     /// Initialize data structure
-    SpecularManifoldGlints(const Scene *scene, const SMSConfig &config);
-
-    virtual ~SpecularManifoldGlints();
+    SpecularManifoldGlints() {}
+    ~SpecularManifoldGlints() {}
 
     // ========================================================================
     //           Main functionality, to be called from integrators
     // ========================================================================
+
+    void init(const Scene *scene, const SMSConfig &config);
 
     /**
      * \brief Perform specular manifold sampling for glints, with parameters

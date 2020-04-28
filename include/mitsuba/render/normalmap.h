@@ -37,6 +37,10 @@ public:
         return m_sizes[std::min(level, m_normals_mipmap.size()-1)];
     }
 
+    inline const ScalarFloat *lean_data() const {
+        return (const ScalarFloat *) m_lean_mipmap[0]->data();
+    }
+
     /**
      * \brief Evaluate normal map
      *

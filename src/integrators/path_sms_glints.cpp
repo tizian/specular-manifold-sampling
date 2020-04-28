@@ -8,6 +8,7 @@
 #include <mitsuba/render/records.h>
 
 #include <mitsuba/render/manifold_glints.h>
+#include <mitsuba/render/manifold_glints_vectorized.h>
 
 NAMESPACE_BEGIN(mitsuba)
 
@@ -31,8 +32,12 @@ class GlintSMSPathIntegrator : public MonteCarloIntegrator<Float, Spectrum> {
 public:
     MTS_IMPORT_BASE(MonteCarloIntegrator, m_max_depth, m_rr_depth)
     MTS_IMPORT_TYPES(Scene, Sampler, Sensor, Emitter, EmitterPtr, BSDF, BSDFPtr, ShapePtr, Medium)
-    using SpecularManifold = SpecularManifold<Float, Spectrum>;
-    using SpecularManifoldGlints = SpecularManifoldGlints<Float, Spectrum>;
+    using SpecularManifold                 = SpecularManifold<Float, Spectrum>;
+    using SpecularManifoldGlints           = SpecularManifoldGlints<Float, Spectrum>;
+    using SpecularManifoldGlintsVectorized = SpecularManifoldGlintsVectorized<Float, Spectrum>;
+
+    static inline ThreadLocal<SpecularManifoldGlints>           tl_manifold_scalar{};
+    static inline ThreadLocal<SpecularManifoldGlintsVectorized> tl_manifold_vectorized{};
 
     GlintSMSPathIntegrator(const Properties &props) : Base(props) {
         m_sms_config = SMSConfig();
@@ -44,6 +49,8 @@ public:
         m_sms_config.max_trials             = props.int_("max_trials", -1);
         m_sms_config.bsdf_strategy_only     = props.bool_("bsdf_strategy_only", false);
         m_sms_config.sms_strategy_only      = props.bool_("sms_strategy_only", false);
+
+        m_vectorized = props.bool_("glints_vectorized", false);
     }
 
     bool render(Scene *scene, Sensor *sensor) override {
@@ -59,6 +66,15 @@ public:
                                      Float * /* aovs */,
                                      Mask active) const override {
         MTS_MASKED_FUNCTION(ProfilerPhase::SamplingIntegratorSample, active);
+
+        auto &mf_scalar = (SpecularManifoldGlints &)tl_manifold_scalar;
+        auto &mf_vectorized = (SpecularManifoldGlintsVectorized &)tl_manifold_vectorized;
+        if (m_vectorized) {
+            mf_vectorized.init(scene, m_sms_config);
+            mf_vectorized.init_sampler(sampler);
+        } else {
+            mf_scalar.init(scene, m_sms_config);
+        }
 
         if constexpr (is_array_v<Float>) {
             Throw("This integrator does not support vector/gpu/autodiff modes!");
@@ -103,8 +119,11 @@ public:
                 bool on_glinty_shape = si.shape->is_glinty() && depth == 1;
 
                 if (on_glinty_shape) {
-                    SpecularManifoldGlints mf(scene, m_sms_config);
-                    result += mf.specular_manifold_sampling(ray.o, si, sampler);
+                    if (m_vectorized) {
+                        result += mf_vectorized.specular_manifold_sampling(ray.o, si, sampler);
+                    } else {
+                        result += mf_scalar.specular_manifold_sampling(ray.o, si, sampler);
+                    }
                 }
 
                 // --------------------- Emitter sampling ---------------------
@@ -193,6 +212,7 @@ public:
     MTS_DECLARE_CLASS()
 protected:
     SMSConfig m_sms_config;
+    bool m_vectorized;
 };
 
 MTS_IMPLEMENT_CLASS_VARIANT(GlintSMSPathIntegrator, MonteCarloIntegrator)

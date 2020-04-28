@@ -498,6 +498,14 @@ public:
     virtual Float glint_component_weight(const SurfaceInteraction3f &si,
                                          Mask active = true) const;
 
+    /**
+     * \brief Return raw pointer and data for underlying LEAN map.
+     *
+     * This is only necessary to implement a vectorized access of slopes and
+     * their derivatives for glints.
+     */
+    virtual std::tuple<const Float *, size_t, Float> lean_pointer() const;
+
     // -----------------------------------------------------------------------
     //! @{ \name BSDF property accessors (components, flags, etc)
     // -----------------------------------------------------------------------
