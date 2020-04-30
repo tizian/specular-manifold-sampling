@@ -1,0 +1,116 @@
+<scene version="2.0.0">
+
+    <default name="spp" value="32"/>
+
+    <default name="caustics_twostage"            value="true"/>
+    <default name="uniqueness_threshold" value="0.0001"/>
+
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <default name="caustics_biased"                 value="false"/>
+    <default name="caustics_twostage"               value="false"/>
+    <default name="caustics_halfvector_constraints" value="false"/>
+    <default name="caustics_mnee_init"              value="false"/>
+
+    <default name="caustics_max_iterations"         value="20"/>
+    <default name="caustics_solver_threshold"       value="0.00001"/>
+    <default name="caustics_uniqueness_threshold"   value="0.0001"/>
+    <default name="caustics_max_trials"             value="10000000"/>
+
+    <default name="disable_reflected_emitters" value="false"/>
+
+    <integrator type="path_sms_ss">
+        <integer name="max_depth" value="7"/>
+        <integer name="samples_per_pass" value="$samples_per_pass"/>
+        <float name="timeout" value="$timeout"/>
+
+        <boolean name="biased"                  value="$caustics_biased"/>
+        <boolean name="twostage"                value="$caustics_twostage"/>
+        <boolean name="halfvector_constraints"  value="$caustics_halfvector_constraints"/>
+        <boolean name="mnee_init"               value="$caustics_mnee_init"/>
+        <integer name="max_iterations"          value="$caustics_max_iterations"/>
+        <float   name="solver_threshold"        value="$caustics_solver_threshold"/>
+        <float   name="uniqueness_threshold"    value="$caustics_uniqueness_threshold"/>
+        <integer name="max_trials"              value="$caustics_max_trials"/>
+    </integrator>
+
+    <!-- Camera setup -->
+    <sensor type="perspective">
+        <string name="fov_axis" value="smaller"/>
+        <float name="near_clip" value="0.0001"/>
+        <float name="far_clip" value="1000000"/>
+        <float name="fov" value="25"/>
+        <transform name="to_world">
+            <lookat origin="0, 40, 40"
+                    target="0, 0, 0"
+                    up    ="0, 1, 0"/>
+            <translate x="-3"/>
+        </transform>
+        <sampler type="independent">
+            <integer name="sample_count" value="$spp"/>
+        </sampler>
+        <film type="hdrfilm">
+            <integer name="width" value="800"/>
+            <integer name="height" value="800"/>
+            <rfilter type="gaussian"/>
+        </film>
+    </sensor>
+
+    <shape type="rectangle">
+        <transform name="to_world">
+            <scale x="0.1" y="0.1" z="0.1"/>
+            <rotate x="1" y="0" z="0" angle="90"/>
+
+            <translate x="0" y="50" z="0"/>
+            <rotate x="1" angle="60"/>
+
+            <rotate y="1" angle="-40"/>
+        </transform>
+
+        <emitter type="area">
+            <boolean name="caustic_emitter_single" value="true"/>
+            <spectrum name="radiance" value="80000"/>
+        </emitter>
+    </shape>
+
+    <shape type="rectangle">
+        <boolean name="caustic_caster_single" value="true"/>
+
+        <bsdf type="normalmap">
+            <bsdf type="conductor">
+                <string name="material" value="Au"/>
+            </bsdf>
+
+            <string name="filename" value="textures/normalmap_gaussian.exr"/>
+            <boolean name="use_slopes" value="true"/>
+        </bsdf>
+
+        <transform name="to_world">
+            <scale x="8" y="8" z="8"/>
+            <rotate x="0" y="1" z="0" angle="-30"/>
+
+            <translate y="8"/>
+        </transform>
+    </shape>
+
+    <!-- Ground plane -->
+    <shape type="rectangle">
+        <boolean name="caustic_receiver" value="true"/>
+
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/[2K]Tiles71/Tiles71_col.jpg"/>
+                <transform name="to_uv">
+                    <scale x="40" y="40"/>
+                </transform>
+            </spectrum>
+        </bsdf>
+
+        <transform name="to_world">
+            <scale x="400" y="400" z="400"/>
+            <rotate x="1" y="0" z="0" angle="-90"/>
+        </transform>
+    </shape>
+
+</scene>

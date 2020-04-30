@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<scene version="2.0.0">
+    <default name="spp" value="64"/>
+
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <default name="glints_biased"                 value="false"/>
+    <default name="glints_max_iterations"         value="20"/>
+    <default name="glints_solver_threshold"       value="0.00004"/>
+    <default name="glints_uniqueness_threshold"   value="0.0002"/>
+    <default name="glints_max_trials"             value="32"/>
+    <default name="glints_bsdf_strategy_only"     value="false"/>
+    <default name="glints_sms_strategy_only"      value="false"/>
+    <default name="glints_vectorized"             value="false"/>
+
+    <integrator type="path_sms_glints">
+        <integer name="max_depth" value="-1"/>
+        <integer name="samples_per_pass" value="$samples_per_pass"/>
+        <float name="timeout" value="$timeout"/>
+
+        <boolean name="biased"                  value="$glints_biased"/>
+        <integer name="max_iterations"          value="$glints_max_iterations"/>
+        <float   name="solver_threshold"        value="$glints_solver_threshold"/>
+        <float   name="uniqueness_threshold"    value="$glints_uniqueness_threshold"/>
+        <integer name="max_trials"              value="$glints_max_trials"/>
+        <boolean name="bsdf_strategy_only"      value="$glints_bsdf_strategy_only"/>
+        <boolean name="sms_strategy_only"       value="$glints_sms_strategy_only"/>
+
+        <boolean name="glints_vectorized"       value="$glints_vectorized"/>
+
+        <float name="glint_diff_scale_factor_clamp" value="1.0"/>
+    </integrator>
+
+    <bsdf type="normalmap" id="glints">
+        <bsdf type="conductor">
+        </bsdf>
+        <string name="filename" value="textures/normalmap_brushed.exr"/>
+        <float name="tiles" value="1"/>
+        <boolean name="use_slopes" value="true"/>
+
+        <boolean name="lean_fallback" value="true"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="plastic">
+        <float name="alpha" value="0.2"/>
+        <rgb name="diffuse_reflectance" value="0.0075, 0.0075, 0.0075"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="floor">
+        <float name="alpha" value="0.08"/>
+        <rgb name="diffuse_reflectance" value="0.03, 0.02, 0.08"/>
+    </bsdf>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/kettle_metal.obj" />
+        <ref id="glints"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/kettle_plastic.obj" />
+        <ref id="plastic"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/plane.obj" />
+        <ref id="floor"/>
+    </shape>
+
+    <film type="hdrfilm" id="film">
+        <integer name="width" value="800" />
+        <integer name="height" value="800" />
+        <string name="pixel_format" value="rgb"/>
+    </film>
+
+    <sampler type="independent" id="sampler">
+        <integer name="sample_count" value="$spp" />
+    </sampler>
+
+    <sensor type="perspective">
+        <string name="fov_axis" value="larger"/>
+        <float name="fov" value="39.597752"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="180.00"/>
+            <rotate x="1.0" y="0.0" z="0.0" angle="-25.54"/>
+            <rotate x="0.0" y="1.0" z="0.0" angle="-37.34"/>
+            <rotate x="0.0" y="0.0" z="1.0" angle="-0.00"/>
+            <translate x="-16.546198" y="19.364504" z="22.241714"/>
+        </transform>
+
+        <ref id="sampler"/>
+        <ref id="film"/>
+    </sensor>
+
+    <emitter type="envmap">
+        <string name="filename" value="textures/grace_edited.exr"/>
+        <transform name="to_world">
+            <rotate y="1" angle="20" />
+        </transform>
+        <float name="scale" value="2.0"/>
+    </emitter>
+</scene>

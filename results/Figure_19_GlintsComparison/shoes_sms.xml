@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<scene version="2.0.0">
+    <default name="spp" value="64"/>
+
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <default name="glints_biased"                 value="false"/>
+    <default name="glints_max_iterations"         value="20"/>
+    <default name="glints_solver_threshold"       value="0.00004"/>
+    <default name="glints_uniqueness_threshold"   value="0.0002"/>
+    <default name="glints_max_trials"             value="16"/>
+    <default name="glints_bsdf_strategy_only"     value="false"/>
+    <default name="glints_sms_strategy_only"      value="false"/>
+    <default name="glints_vectorized"             value="false"/>
+
+    <integrator type="path_sms_glints">
+        <integer name="max_depth" value="-1"/>
+        <integer name="samples_per_pass" value="$samples_per_pass"/>
+        <float name="timeout" value="$timeout"/>
+
+        <boolean name="biased"                  value="$glints_biased"/>
+        <integer name="max_iterations"          value="$glints_max_iterations"/>
+        <float   name="solver_threshold"        value="$glints_solver_threshold"/>
+        <float   name="uniqueness_threshold"    value="$glints_uniqueness_threshold"/>
+        <integer name="max_trials"              value="$glints_max_trials"/>
+        <boolean name="bsdf_strategy_only"      value="$glints_bsdf_strategy_only"/>
+        <boolean name="sms_strategy_only"       value="$glints_sms_strategy_only"/>
+
+        <boolean name="glints_vectorized"       value="$glints_vectorized"/>
+
+        <float name="glint_diff_scale_factor_clamp" value="1.0"/>
+    </integrator>
+
+    <bsdf type="normalmap" id="shoe_outside">
+        <bsdf type="conductor">
+        </bsdf>
+        <string name="filename" value="textures/normalmap_gaussian.exr"/>
+        <float name="tiles" value="5"/>
+        <boolean name="use_slopes" value="true"/>
+
+        <boolean name="lean_fallback" value="true"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="floor">
+        <float name="alpha" value="0.08"/>
+        <rgb name="diffuse_reflectance" value="0.0075, 0.03, 0.075"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="shoe_inside">
+        <float name="alpha" value="0.3"/>
+        <rgb name="diffuse_reflectance" value="0.9, 0.81, 0.58"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="sole">
+        <float name="alpha" value="0.06"/>
+        <rgb name="diffuse_reflectance" value="0.28, 0.02, 0.04"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="heel_protection">
+        <rgb name="diffuse_reflectance" value="0.01, 0.01, 0.01"/>
+        <float name="alpha" value="0.1"/>
+    </bsdf>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe1_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe1_outside.obj" />
+        <ref id="shoe_outside"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe1_sole.obj" />
+        <ref id="sole"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe1_heel_protection.obj" />
+        <ref id="heel_protection"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe2_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe2_outside.obj" />
+        <ref id="shoe_outside"/>
+    </shape>
+
+    <bsdf type="diffuse" id="shoe_outside_border">
+    </bsdf>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe1_outside_border.obj" />
+        <ref id="shoe_outside_border"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe2_outside_border.obj" />
+        <ref id="shoe_outside_border"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe2_sole.obj" />
+        <ref id="sole"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe2_heel_protection.obj" />
+        <ref id="heel_protection"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/plane.obj" />
+        <ref id="floor"/>
+    </shape>
+
+    <film type="hdrfilm" id="film">
+        <integer name="width" value="800" />
+        <integer name="height" value="800" />
+        <string name="pixel_format" value="rgb"/>
+    </film>
+
+    <sampler type="independent" id="sampler">
+        <integer name="sample_count" value="$spp" />
+    </sampler>
+
+    <sensor type="perspective">
+        <string name="fov_axis" value="larger"/>
+        <float name="fov" value="33.398488"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="180.00"/>
+            <rotate x="1.0" y="0.0" z="0.0" angle="-19.66"/>
+            <rotate x="0.0" y="1.0" z="0.0" angle="-10.53"/>
+            <rotate x="0.0" y="0.0" z="1.0" angle="0.00"/>
+            <translate x="-5.359544" y="18.869686" z="39.619064"/>
+        </transform>
+
+        <ref id="sampler"/>
+        <ref id="film"/>
+    </sensor>
+
+    <emitter type="envmap">
+        <string name="filename" value="textures/sunsky.exr"/>
+        <transform name="to_world">
+            <rotate y="1" angle="-160" />
+        </transform>
+        <float name="scale" value="2.0"/>
+    </emitter>
+</scene>

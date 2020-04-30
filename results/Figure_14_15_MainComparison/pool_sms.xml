@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<scene version="2.0.0">
+    <default name="spp" value="32"/>
+
+    <default name="crop_offset_x" value="0"/>
+    <default name="crop_offset_y" value="0"/>
+    <default name="crop_width" value="1920"/>
+    <default name="crop_height" value="1080"/>
+
+    <default name="normalmap" value="textures/normalmap_pool.exr"/>
+
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <default name="caustics_biased"                 value="false"/>
+    <default name="caustics_twostage"               value="false"/>
+    <default name="caustics_halfvector_constraints" value="false"/>
+    <default name="caustics_mnee_init"              value="false"/>
+
+    <default name="caustics_max_iterations"         value="20"/>
+    <default name="caustics_solver_threshold"       value="0.00001"/>
+    <default name="caustics_uniqueness_threshold"   value="0.00001"/>
+    <default name="caustics_max_trials"             value="10000000"/>
+
+    <default name="biased_mnee" value="false"/>
+
+    <integrator type="path_sms_ss">
+        <integer name="max_depth" value="7"/>
+        <integer name="samples_per_pass" value="$samples_per_pass"/>
+        <float name="timeout" value="$timeout"/>
+
+        <boolean name="biased"                  value="$caustics_biased"/>
+        <boolean name="twostage"                value="$caustics_twostage"/>
+        <boolean name="halfvector_constraints"  value="$caustics_halfvector_constraints"/>
+        <boolean name="mnee_init"               value="$caustics_mnee_init"/>
+        <integer name="max_iterations"          value="$caustics_max_iterations"/>
+        <float   name="solver_threshold"        value="$caustics_solver_threshold"/>
+        <float   name="uniqueness_threshold"    value="$caustics_uniqueness_threshold"/>
+        <integer name="max_trials"              value="$caustics_max_trials"/>
+
+        <boolean name="biased_mnee" value="$biased_mnee"/>
+    </integrator>
+
+    <emitter type="envmap">
+        <boolean name="caustic_emitter_single" value="true"/>
+
+        <string name="filename" value="textures/quarry_03_1k.exr"/>
+        <float name="scale" value="0.4"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="170"/>
+        </transform>
+    </emitter>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/pool_inside.obj" />
+        <boolean name="caustic_receiver" value="true"/>
+
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/[2K]Tiles06/Tiles06_col.png"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/water_plane.obj"/>
+        <boolean name="caustic_caster_single" value="true"/>
+
+        <bsdf type="normalmap">
+            <bsdf type="dielectric">
+                <float name="int_ior" value="1.33"/>
+            </bsdf>
+            <string name="filename" value="$normalmap"/>
+            <boolean name="use_slopes" value="true"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/pool_border.obj" />
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/[2K]Tiles54/Tiles54_col.jpg"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/floor1.obj" />
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/[2K]Tiles27/Tiles27_col.jpg"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/floor2.obj" />
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/[2K]Tiles50/Tiles50_col.jpg"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+
+
+    <shape type="obj">
+        <string name="filename" value="meshes/ladder_steps.obj" />
+        <bsdf type="roughplastic">
+            <string name="distribution" value="ggx"/>
+            <float name="alpha" value="0.1"/>
+            <rgb name="diffuse_reflectance" value="0.01, 0.01, 0.04"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/ladder_metal.obj" />
+        <bsdf type="roughconductor">
+            <string name="distribution" value="ggx"/>
+            <float name="alpha" value="0.2"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/chairs_wood.obj" />
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.73, 0.58, 0.43"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/chair_fabric_1.obj" />
+        <bsdf type="normalmap">
+            <bsdf type="diffuse">
+                <spectrum name="reflectance" type="bitmap">
+                    <string name="filename" value="textures/Striped_cotton_01_2K_Base_Color.jpg"/>
+                </spectrum>
+            </bsdf>
+            <string name="filename" value="textures/Striped_cotton_01_2K_Normal.jpg"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/chair_fabric_2.obj" />
+        <bsdf type="normalmap">
+            <bsdf type="diffuse">
+                <spectrum name="reflectance" type="bitmap">
+                    <string name="filename" value="textures/Striped_cotton_01_2K_Base_Color_2.jpg"/>
+                </spectrum>
+            </bsdf>
+            <string name="filename" value="textures/Striped_cotton_01_2K_Normal.jpg"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/umbrella_base.obj" />
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.25, 0.25, 0.25"/>
+        </bsdf>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/umbrella_cylinders.obj" />
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.03, 0.03, 0.03"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/umbrella_top.obj" />
+
+        <bsdf type="normalmap">
+            <bsdf type="diffuse">
+                <spectrum name="reflectance" type="bitmap">
+                    <string name="filename" value="textures/siggraph_logo.png"/>
+                </spectrum>
+            </bsdf>
+            <string name="filename" value="textures/[2K]Fabric33/Fabric33_nrm.png"/>
+            <float name="tiles" value="4"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/torus.obj" />
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.8, 0.126, 0.407"/>
+        </bsdf>
+    </shape>
+
+
+    <film type="hdrfilm" id="film">
+        <integer name="width" value="1920"/>
+        <integer name="height" value="1080"/>
+        <rfilter type="gaussian"/>
+
+        <integer name="crop_offset_x" value="$crop_offset_x"/>
+        <integer name="crop_offset_y" value="$crop_offset_y"/>
+        <integer name="crop_width" value="$crop_width"/>
+        <integer name="crop_height" value="$crop_height"/>
+    </film>
+    <sampler type="independent" id="sampler">
+        <integer name="sample_count" value="$spp" />
+    </sampler>
+
+    <sensor type="perspective">
+        <string name="fov_axis" value="larger"/>
+        <float name="fov" value="46.397181"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="180.00"/>
+            <rotate x="1.0" y="0.0" z="0.0" angle="-42.48"/>
+            <rotate x="0.0" y="1.0" z="0.0" angle="79.56"/>
+            <rotate x="0.0" y="0.0" z="1.0" angle="0.00"/>
+            <translate x="13.777025" y="14.458819" z="1.740857"/>
+        </transform>
+
+        <ref id="sampler"/>
+        <ref id="film"/>
+    </sensor>
+</scene>

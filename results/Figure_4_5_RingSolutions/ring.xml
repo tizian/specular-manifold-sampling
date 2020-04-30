@@ -1,0 +1,74 @@
+<scene version="2.0.0">
+    <default name="spp" value="200"/>
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <integrator type="path_sms_ss">
+    </integrator>
+
+    <!-- Camera setup -->
+    <sensor type="perspective">
+        <string name="fov_axis" value="larger"/>
+        <float name="near_clip" value="0.0001"/>
+        <float name="far_clip" value="1000000"/>
+        <float name="fov" value="28"/>
+        <transform name="to_world">
+            <lookat origin="0, 40, 40"
+                    target="0, 0, 0"
+                    up    ="0, 1, 0"/>
+        </transform>
+        <sampler type="independent">
+            <integer name="sample_count" value="$spp"/>
+        </sampler>
+        <film type="hdrfilm">
+            <integer name="width" value="720"/>
+            <integer name="height" value="540"/>
+            <rfilter type="gaussian"/>
+        </film>
+    </sensor>
+
+    <shape type="rectangle">
+        <transform name="to_world">
+            <scale x="0.1" y="0.1" z="0.1"/>
+            <rotate x="1" y="0" z="0" angle="90"/>
+
+            <translate x="-12" y="10" z="8"/>
+        </transform>
+
+        <emitter type="area">
+            <boolean name="caustic_emitter_single" value="true"/>
+            <spectrum name="radiance" value="70000"/>
+        </emitter>
+    </shape>
+
+    <shape type="cylinder">
+        <boolean name="caustic_caster_single" value="true"/>
+        <!-- <boolean name="flip_normals" value="true"/> -->
+
+        <bsdf type="twosided">
+            <bsdf type="conductor">
+                <string name="material" value="Au"/>
+            </bsdf>
+        </bsdf>
+
+        <transform name="to_world">
+            <scale x="10" y="10" z="4"/>
+            <rotate x="1" y="0" z="0" angle="-90"/>
+            <rotate x="0" y="1" z="0" angle="140"/>
+        </transform>
+    </shape>
+
+    <!-- Ground plane -->
+    <shape type="rectangle">
+        <boolean name="caustic_receiver" value="true"/>
+
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.1, 0.1, 0.14"/>
+        </bsdf>
+
+        <transform name="to_world">
+            <scale x="100" y="100" z="100"/>
+            <rotate x="1" y="0" z="0" angle="-90"/>
+        </transform>
+    </shape>
+</scene>

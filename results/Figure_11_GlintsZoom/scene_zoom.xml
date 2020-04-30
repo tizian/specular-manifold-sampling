@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<scene version="2.0.0">
+    <default name="spp" value="64"/>
+
+    <default name="uniqueness_threshold" value="0.00000000001"/>
+
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <integrator type="path">
+    </integrator>
+
+    <emitter type="point">
+        <point name="position" x="20" y="40" z="40"/>
+        <rgb name="intensity" value="8000"/>
+    </emitter>
+
+    <bsdf type="normalmap" id="shoe_outside">
+        <bsdf type="conductor">
+        </bsdf>
+
+        <string name="filename" value="textures/normalmap_gaussian.exr"/>
+        <float name="tiles" value="25"/>
+        <boolean name="use_slopes" value="true"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="shoe_inside">
+        <float name="alpha" value="0.3"/>
+        <rgb name="diffuse_reflectance" value="0.9, 0.81, 0.58"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="sole">
+        <float name="alpha" value="0.06"/>
+        <rgb name="diffuse_reflectance" value="0.53, 0.004, 0.01"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="heel_protection">
+        <rgb name="diffuse_reflectance" value="0.01, 0.01, 0.01"/>
+        <float name="alpha" value="0.1"/>
+    </bsdf>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe1_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe1_outside.obj" />
+        <ref id="shoe_outside"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe1_sole.obj" />
+        <ref id="sole"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe1_heel_protection.obj" />
+        <ref id="heel_protection"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe2_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe2_outside.obj" />
+        <ref id="shoe_outside"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe2_sole.obj" />
+        <ref id="sole"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe2_heel_protection.obj" />
+        <ref id="heel_protection"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/plane.obj" />
+    </shape>
+
+    <film type="hdrfilm" id="film">
+        <integer name="width" value="800" />
+        <integer name="height" value="600" />
+        <string name="pixel_format" value="rgb"/>
+    </film>
+
+    <sampler type="independent" id="sampler">
+        <integer name="sample_count" value="$spp" />
+    </sampler>
+
+    <sensor type="perspective">
+        <string name="fov_axis" value="larger"/>
+        <float name="fov" value="39.597752"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="180.00"/>
+            <rotate x="1.0" y="0.0" z="0.0" angle="-19.66"/>
+            <rotate x="0.0" y="1.0" z="0.0" angle="-10.47"/>
+            <rotate x="0.0" y="0.0" z="1.0" angle="0.00"/>
+            <translate x="-6.102689" y="18.869686" z="39.480991"/>
+        </transform>
+
+        <ref id="sampler"/>
+        <ref id="film"/>
+    </sensor>
+</scene>

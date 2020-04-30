@@ -1,0 +1,139 @@
+<scene version="2.0.0">
+    <default name="spp" value="5000"/>
+
+    <default name="r" value="0.05"/>
+
+    <default name="x" value="4.218, 0.000, -3.074"/>
+    <default name="y" value="-11.982, 10.000, 8.050"/>
+
+    <default name="p1" value="9.476, 2.711, 3.194"/>
+    <default name="p2" value="0.731, 2.595, -9.973"/>
+    <default name="p3" value="7.808, 1.641, -6.248"/>
+
+    <default name="c1" value="1.78823529 0.20392157 0.21960784"/>
+    <default name="c2" value="0.43137255 0.98823529 1.44313725"/>
+    <default name="c3" value="0.60392157 1.37254902 0.58039216"/>
+
+    <integrator type="direct">
+    </integrator>
+
+    <!-- Camera setup -->
+    <sensor type="perspective">
+        <string name="fov_axis" value="larger"/>
+        <float name="near_clip" value="0.01"/>
+        <float name="far_clip" value="100"/>
+        <float name="fov" value="28"/>
+        <transform name="to_world">
+            <lookat origin="0, 40, 40"
+                    target="0, 0, 0"
+                    up    ="0, 1, 0"/>
+        </transform>
+        <sampler type="independent">
+            <integer name="sample_count" value="$spp"/>
+        </sampler>
+        <film type="hdrfilm">
+            <integer name="width" value="500"/>
+            <integer name="height" value="375"/>
+            <rfilter type="gaussian"/>
+        </film>
+    </sensor>
+
+    <shape type="rectangle">
+        <transform name="to_world">
+            <scale x="0.1" y="0.1" z="0.1"/>
+            <rotate x="1" y="0" z="0" angle="90"/>
+
+            <translate x="-12" y="10" z="8"/>
+        </transform>
+
+        <emitter type="area">
+            <spectrum name="radiance" value="70000"/>
+        </emitter>
+    </shape>
+
+    <shape type="cylinder">
+        <float name="radius" value="$r"/>
+        <point name="p0" value="$x"/>
+        <point name="p1" value="$p1"/>
+
+        <emitter type="area">
+            <rgb name="radiance" value="$c1"/>
+        </emitter>
+    </shape>
+    <shape type="cylinder">
+        <float name="radius" value="$r"/>
+        <point name="p0" value="$p1"/>
+        <point name="p1" value="$y"/>
+
+        <emitter type="area">
+            <rgb name="radiance" value="$c1"/>
+        </emitter>
+    </shape>
+
+
+    <shape type="cylinder">
+        <float name="radius" value="$r"/>
+        <point name="p0" value="$x"/>
+        <point name="p1" value="$p2"/>
+
+        <emitter type="area">
+            <rgb name="radiance" value="$c2"/>
+        </emitter>
+    </shape>
+    <shape type="cylinder">
+        <float name="radius" value="$r"/>
+        <point name="p0" value="$p2"/>
+        <point name="p1" value="$y"/>
+
+        <emitter type="area">
+            <rgb name="radiance" value="$c2"/>
+        </emitter>
+    </shape>
+
+
+    <shape type="cylinder">
+        <float name="radius" value="$r"/>
+        <point name="p0" value="$x"/>
+        <point name="p1" value="$p3"/>
+
+        <emitter type="area">
+            <rgb name="radiance" value="$c3"/>
+        </emitter>
+    </shape>
+    <shape type="cylinder">
+        <float name="radius" value="$r"/>
+        <point name="p0" value="$p3"/>
+        <point name="p1" value="$y"/>
+
+        <emitter type="area">
+            <rgb name="radiance" value="$c3"/>
+        </emitter>
+    </shape>
+
+
+    <!-- Ground plane -->
+    <shape type="rectangle">
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.1, 0.1, 0.14"/>
+        </bsdf>
+
+        <transform name="to_world">
+            <scale x="1000" y="1000" z="1000"/>
+            <rotate x="1" y="0" z="0" angle="-90"/>
+        </transform>
+    </shape>
+
+    <shape type="cylinder">
+        <bsdf type="twosided">
+            <bsdf type="diffuse">
+                <spectrum name="reflectance" value="0.7"/>
+            </bsdf>
+        </bsdf>
+
+        <transform name="to_world">
+            <scale x="10" y="10" z="4"/>
+            <rotate x="1" y="0" z="0" angle="-90"/>
+            <rotate x="0" y="1" z="0" angle="140"/>
+        </transform>
+    </shape>
+</scene>

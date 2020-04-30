@@ -1,0 +1,567 @@
+<?xml version="1.0"?>
+<scene version="2.0.0">
+    <default name="spp" value="4096"/>
+
+    <default name="res_w" value="1920"/>
+    <default name="res_h" value="940"/>
+
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <default name="caustics_enabled"                value="true"/>
+    <default name="caustics_biased"                 value="false"/>
+    <default name="caustics_twostage"               value="true"/>
+    <default name="caustics_max_iterations"         value="20"/>
+    <default name="caustics_solver_threshold"       value="0.00001"/>
+    <default name="caustics_uniqueness_threshold"   value="0.00002"/>
+    <default name="caustics_max_trials"             value="500"/>
+    <default name="caustics_bounces"                value="2"/>
+
+    <default name="glints_enabled"                    value="true"/>
+    <default name="glints_biased"                     value="false"/>
+    <default name="glints_max_iterations"             value="20"/>
+    <default name="glints_solver_threshold"           value="0.0001"/>
+    <default name="glints_uniqueness_threshold"       value="0.0001"/>
+    <default name="glints_max_trials"                 value="16"/>
+
+    <default name="non_sms_paths_enabled"             value="true"/>
+
+    <integrator type="path_sms_teaser">
+        <integer name="max_depth" value="10"/>
+        <integer name="samples_per_pass" value="$samples_per_pass"/>
+        <float name="timeout" value="$timeout"/>
+
+        <boolean name="caustics_enabled"                 value="$caustics_enabled"/>
+        <boolean name="caustics_biased"                  value="$caustics_biased"/>
+        <boolean name="caustics_twostage"                value="$caustics_twostage"/>
+        <integer name="caustics_max_iterations"          value="$caustics_max_iterations"/>
+        <float   name="caustics_solver_threshold"        value="$caustics_solver_threshold"/>
+        <float   name="caustics_uniqueness_threshold"    value="$caustics_uniqueness_threshold"/>
+        <integer name="caustics_max_trials"              value="$caustics_max_trials"/>
+        <integer name="caustics_bounces"                 value="$caustics_bounces"/>
+
+        <boolean name="glints_enabled"                value="$glints_enabled"/>
+        <boolean name="glints_biased"                  value="$glints_biased"/>
+        <integer name="glints_max_iterations"          value="$glints_max_iterations"/>
+        <float   name="glints_solver_threshold"        value="$glints_solver_threshold"/>
+        <float   name="glints_uniqueness_threshold"    value="$glints_uniqueness_threshold"/>
+        <integer name="glints_max_trials"              value="$glints_max_trials"/>
+
+        <boolean name="non_sms_paths_enabled"         value="$non_sms_paths_enabled"/>
+
+        <float name="glint_diff_scale_factor_clamp" value="1.0"/>
+    </integrator>
+
+    <emitter type="envmap">
+        <string name="filename" value="textures/leadenhall_market_1k.exr"/>
+        <float name="scale" value="0.32"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="305"/>
+        </transform>
+    </emitter>
+
+<!--
+                ____    __    ____  __  .__   __.  _______   ______   ____    __    ____   _______.
+                \   \  /  \  /   / |  | |  \ |  | |       \ /  __  \  \   \  /  \  /   /  /       |
+                 \   \/    \/   /  |  | |   \|  | |  .--.  |  |  |  |  \   \/    \/   /  |   (----`
+                  \            /   |  | |  . `  | |  |  |  |  |  |  |   \            /    \   \
+                   \    /\    /    |  | |  |\   | |  '--'  |  `--'  |    \    /\    / .----)   |
+                    \__/  \__/     |__| |__| \__| |_______/ \______/      \__/  \__/  |_______/
+-->
+
+
+  <shape type="obj">
+        <string name="filename" value="meshes/window_1.obj" />
+        <bsdf type="dielectric"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/window_2.obj" />
+        <bsdf type="dielectric"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/logo.obj" />
+        <bsdf type="mask">
+            <bsdf type="roughplastic">
+                <spectrum type="bitmap" name="diffuse_reflectance">
+                    <string name="filename" value="textures/logo_color.png"/>
+                </spectrum>
+                <float name="alpha" value="0.1"/>
+            </bsdf>
+
+            <spectrum type="bitmap" name="opacity">
+                <string name="filename" value="textures/logo_mask.png"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/window_border.obj" />
+        <bsdf type="roughplastic">
+            <rgb name="diffuse_reflectance" value="0.16, 0.29, 0.26"/>
+            <float name="alpha" value="0.12"/>
+        </bsdf>
+    </shape>
+
+<!--
+                     _______. __    __    ______    _______     _______.
+                    /       ||  |  |  |  /  __  \  |   ____|   /       |
+                   |   (----`|  |__|  | |  |  |  | |  |__     |   (----`
+                    \   \    |   __   | |  |  |  | |   __|     \   \
+                .----)   |   |  |  |  | |  `--'  | |  |____.----)   |
+                |_______/    |__|  |__|  \______/  |_______|_______/
+-->
+
+  <bsdf type="blendbsdf" id="shoe_outside_left">
+        <bsdf type="normalmap">
+            <bsdf type="conductor"/>
+
+            <string name="filename" value="textures/gauss_shoes.exr"/>
+            <float name="tiles" value="4"/>
+            <boolean name="use_slopes" value="true"/>
+
+            <boolean name="lean_fallback" value="true"/>
+            <float name="lean_fallback_alpha" value="0.2"/>
+        </bsdf>
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.0, 0.06, 0.64"/>
+        </bsdf>
+        <spectrum name="weight" value="0.5"/>
+    </bsdf>
+    <bsdf type="diffuse" id="shoe_outside_border_left">
+        <rgb name="reflectance" value="0.0, 0.06, 0.64"/>
+    </bsdf>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe_left_a_outside.obj" />
+        <ref id="shoe_outside_left"/>
+    </shape>
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe_left_b_outside.obj" />
+        <ref id="shoe_outside_left"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_a_outside_border.obj" />
+        <ref id="shoe_outside_border_left"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_b_outside_border.obj" />
+        <ref id="shoe_outside_border_left"/>
+    </shape>
+
+
+
+    <bsdf type="normalmap" id="shoe_outside_center">
+        <bsdf type="conductor">
+        </bsdf>
+        <string name="filename" value="textures/gauss_shoes.exr"/>
+        <float name="tiles" value="4"/>
+        <boolean name="use_slopes" value="true"/>
+
+        <boolean name="lean_fallback" value="true"/>
+        <float name="lean_fallback_alpha" value="0.2"/>
+    </bsdf>
+    <bsdf type="diffuse" id="shoe_outside_border_center">
+    </bsdf>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe_center_a_outside.obj" />
+        <ref id="shoe_outside_center"/>
+    </shape>
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe_center_b_outside.obj" />
+        <ref id="shoe_outside_center"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_a_outside_border.obj" />
+        <ref id="shoe_outside_border_center"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_b_outside_border.obj" />
+        <ref id="shoe_outside_border_center"/>
+    </shape>
+
+
+
+    <bsdf type="blendbsdf" id="shoe_outside_right">
+        <bsdf type="normalmap">
+            <bsdf type="conductor"/>
+
+            <string name="filename" value="textures/gauss_shoes.exr"/>
+            <float name="tiles" value="4"/>
+            <boolean name="use_slopes" value="true"/>
+
+            <boolean name="lean_fallback" value="true"/>
+            <float name="lean_fallback_alpha" value="0.2"/>
+        </bsdf>
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.8, 0.06, 0.04"/>
+        </bsdf>
+        <spectrum name="weight" value="0.5"/>
+    </bsdf>
+    <bsdf type="diffuse" id="shoe_outside_border_right">
+        <rgb name="reflectance" value="0.8, 0.06, 0.04"/>
+    </bsdf>
+
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe_right_a_outside.obj" />
+        <ref id="shoe_outside_right"/>
+    </shape>
+    <shape type="obj">
+        <boolean name="glinty" value="true"/>
+        <string name="filename" value="meshes/shoe_right_b_outside.obj" />
+        <ref id="shoe_outside_right"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_a_outside_border.obj" />
+        <ref id="shoe_outside_border_right"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_b_outside_border.obj" />
+        <ref id="shoe_outside_border_right"/>
+    </shape>
+
+<!---
+                     _______..______     ______   .___________. __       __    _______  __    __  .___________.    _______.     ___.___________.___
+                    /       ||   _  \   /  __  \  |           ||  |     |  |  /  _____||  |  |  | |           |   /       |    /  /|           |\  \
+                   |   (----`|  |_)  | |  |  |  | `---|  |----`|  |     |  | |  |  __  |  |__|  | `---|  |----`  |   (----`   |  | `---|  |----` |  |
+                    \   \    |   ___/  |  |  |  |     |  |     |  |     |  | |  | |_ | |   __   |     |  |        \   \       |  |     |  |      |  |
+                .----)   |   |  |      |  `--'  |     |  |     |  `----.|  | |  |__| | |  |  |  |     |  |    .----)   |      |  |     |  |      |  |
+                |_______/    | _|       \______/      |__|     |_______||__|  \______| |__|  |__|     |__|    |_______/       |  |     |__|      |  |
+                                                                                                                               \__\             /__/
+-->
+
+   <emitter type="spot">
+        <rgb name="intensity" value="20000.0, 20000.0, 16000.0"/>
+        <float name="cutoff_angle" value="12.80"/>
+        <transform name="to_world">
+            <lookat origin="11.77, 45.21, 30.65"
+                    target="12.03, 7.24, 18.07"
+                    up="0.00, 0.00, 1.00"/>
+        </transform>
+        <boolean name="caustic_emitter_single" value="true"/>
+    </emitter>
+
+
+    <emitter type="spot">
+        <rgb name="intensity" value="14000.0, 14000.0, 10000.0"/>
+        <float name="cutoff_angle" value="12.90"/>
+        <transform name="to_world">
+            <lookat origin="-34.03, 43.96, 27.75"
+                    target="-33.62, 5.05, 18.52"
+                    up="0.00, 0.00, 1.00"/>
+        </transform>
+        <boolean name="caustic_emitter_single" value="true"/>
+    </emitter>
+
+
+    <emitter type="spot">
+        <rgb name="intensity" value="8000.0, 8000.0, 5000.0"/>
+        <float name="cutoff_angle" value="12.90"/>
+        <transform name="to_world">
+            <lookat origin="53.91, 43.96, 27.75"
+                    target="57.74, 5.05, 19.34"
+                    up="0.00, 0.00, 1.00"/>
+        </transform>
+        <boolean name="caustic_emitter_single" value="true"/>
+    </emitter>
+
+<!--
+                .______    _______  _______   _______     _______.___________.    ___       __          _______.
+                |   _  \  |   ____||       \ |   ____|   /       |           |   /   \     |  |        /       |
+                |  |_)  | |  |__   |  .--.  ||  |__     |   (----`---|  |----`  /  ^  \    |  |       |   (----`
+                |   ___/  |   __|  |  |  |  ||   __|     \   \       |  |      /  /_\  \   |  |        \   \
+                |  |      |  |____ |  '--'  ||  |____.----)   |      |  |     /  _____  \  |  `----.----)   |
+                | _|      |_______||_______/ |_______|_______/       |__|    /__/     \__\ |_______|_______/
+
+-->
+
+
+    <bsdf type="normalmap" id="wavy_dielectric">
+        <bsdf type="dielectric"/>
+
+        <string name="filename" value="textures/dielectric_wavy.exr"/>
+        <boolean name="use_slopes" value="true"/>
+    </bsdf>
+
+    <bsdf type="normalmap" id="wavy_conductor">
+        <bsdf type="conductor">
+            <string name="material" value="Au"/>
+        </bsdf>
+
+        <string name="filename" value="textures/conductor_wavy.exr"/>
+        <boolean name="use_slopes" value="true"/>
+    </bsdf>
+
+
+    <shape type="obj">
+        <boolean name="caustic_caster_single" value="true"/>
+        <string name="filename" value="meshes/base_left.obj" />
+        <ref id="wavy_conductor"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/base_left_top.obj" />
+        <ref id="base_cover"/>
+    </shape>
+    <emitter type="spot">
+        <spectrum name="intensity" value="8000.0"/>
+        <float name="cutoff_angle" value="33.50"/>
+        <transform name="to_world">
+            <lookat origin="-50.98, -8.98, 37.30"
+                    target="-35.27, -26.16, 4.77"
+                    up="0.00, 0.00, 1.00"/>
+        </transform>
+        <boolean name="caustic_emitter_single" value="true"/>
+    </emitter>
+
+
+    <shape type="obj">
+        <boolean name="caustic_caster_multi" value="true"/>
+        <string name="filename" value="meshes/base_center.obj" />
+        <ref id="wavy_dielectric"/>
+    </shape>
+    <shape type="obj">
+        <boolean name="caustic_bouncer" value="true"/>
+        <string name="filename" value="meshes/base_center_inside.obj" />
+        <bsdf type="dielectric"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/base_center_top.obj" />
+        <ref id="base_cover"/>
+    </shape>
+    <emitter type="point">
+        <point name="position" x="11.9718" y="-15.274" z="9.63587"/>
+        <rgb name="intensity" value="2500, 2500, 6500"/>
+        <boolean name="caustic_emitter_multi" value="true"/>
+    </emitter>
+
+
+    <shape type="obj">
+        <boolean name="caustic_caster_single" value="true"/>
+        <string name="filename" value="meshes/base_right.obj" />
+        <ref id="wavy_conductor"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/base_right_top.obj" />
+        <ref id="base_cover"/>
+    </shape>
+    <emitter type="spot">
+        <spectrum name="intensity" value="3000.0"/>
+        <float name="cutoff_angle" value="33.50"/>
+        <transform name="to_world">
+            <lookat origin="64.92, -8.98, 37.30"
+                    target="54.21, -26.16, 2.80"
+                    up="0.00, 0.00, 1.00"/>
+        </transform>
+        <boolean name="caustic_emitter_single" value="true"/>
+    </emitter>
+
+
+<!---
+                .___  ___.  __       _______.  ______
+                |   \/   | |  |     /       | /      |
+                |  \  /  | |  |    |   (----`|  ,----'
+                |  |\/|  | |  |     \   \    |  |
+                |  |  |  | |  | .----)   |   |  `----.
+                |__|  |__| |__| |_______/     \______|
+
+-->
+
+
+    <bsdf type="diffuse" id="base_cover">
+        <spectrum name="reflectance" type="bitmap">
+            <string name="filename" value="textures/[2K]Metal27/Metal27_col.jpg"/>
+            <transform name="to_uv">
+                <scale x="10" y="10"/>
+            </transform>
+        </spectrum>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="shoe_sole">
+        <rgb name="diffuse_reflectance" value="0.2, 0.02, 0.02"/>
+        <float name="alpha" value="0.1"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="shoe_inside">
+        <float name="alpha" value="0.2"/>
+        <rgb name="diffuse_reflectance" value="0.72, 0.648, 0.464"/>
+    </bsdf>
+
+    <bsdf type="roughplastic" id="shoe_heel">
+        <float name="alpha" value="0.1"/>
+        <rgb name="diffuse_reflectance" value="0.01, 0.01, 0.01"/>
+    </bsdf>
+
+
+    <shape type="obj">
+        <string name="filename" value="meshes/floor.obj" />
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.1, 0.1, 0.1"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <boolean name="caustic_receiver" value="true"/>
+        <string name="filename" value="meshes/wall_left_visible.obj" />
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/Haeckel_Hexactinellae_2.jpg"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/wall_left_top.obj" />
+    </shape>
+
+    <shape type="obj">
+        <boolean name="caustic_receiver" value="true"/>
+        <string name="filename" value="meshes/wall_right_bottom.obj" />
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/wall_right_top.obj" />
+    </shape>
+
+    <shape type="obj">
+        <boolean name="caustic_receiver" value="true"/>
+        <string name="filename" value="meshes/wall_back_visible.obj" />
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/Haeckel_Hexactinellae.jpg"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/wall_back_top.obj" />
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/Haeckel_Hexactinellae.jpg"/>
+            </spectrum>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_a_sole.obj" />
+        <ref id="shoe_sole"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_b_sole.obj" />
+        <ref id="shoe_sole"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_a_sole.obj" />
+        <ref id="shoe_sole"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_b_sole.obj" />
+        <ref id="shoe_sole"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_a_sole.obj" />
+        <ref id="shoe_sole"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_b_sole.obj" />
+        <ref id="shoe_sole"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_a_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_b_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_a_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_b_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_a_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_b_inside.obj" />
+        <ref id="shoe_inside"/>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_a_heel.obj" />
+        <ref id="shoe_heel"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_center_b_heel.obj" />
+        <ref id="shoe_heel"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_a_heel.obj" />
+        <ref id="shoe_heel"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_left_b_heel.obj" />
+        <ref id="shoe_heel"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_a_heel.obj" />
+        <ref id="shoe_heel"/>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/shoe_right_b_heel.obj" />
+        <ref id="shoe_heel"/>
+    </shape>
+
+
+    <shape type="obj">
+        <boolean name="caustic_receiver" value="true"/>
+        <string name="filename" value="meshes/base_top.obj" />
+        <bsdf type="roughplastic">
+            <rgb name="diffuse_reflectance" value="0.04, 0.04, 0.04"/>
+            <float name="alpha" value="0.35"/>
+        </bsdf>
+    </shape>
+    <shape type="obj">
+        <string name="filename" value="meshes/base_sides.obj" />
+        <bsdf type="roughplastic">
+            <rgb name="diffuse_reflectance" value="0.04, 0.04, 0.04"/>
+            <float name="alpha" value="0.35"/>
+        </bsdf>
+    </shape>
+
+    <film type="hdrfilm" id="film">
+        <integer name="width" value="$res_w" />
+        <integer name="height" value="$res_h" />
+        <string name="pixel_format" value="rgb"/>
+    </film>
+    <sampler type="independent" id="sampler">
+        <integer name="sample_count" value="$spp" />
+    </sampler>
+
+
+    <sensor type="perspective">
+        <string name="fov_axis" value="larger"/>
+        <float name="fov" value="53.997748"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="180.00"/>
+            <rotate x="1.0" y="0.0" z="0.0" angle="-4.13"/>
+            <rotate x="0.0" y="1.0" z="0.0" angle="41.00"/>
+            <rotate x="0.0" y="0.0" z="1.0" angle="0.00"/>
+            <translate x="99.057892" y="-1.384256" z="109.044518"/>
+        </transform>
+
+        <ref id="sampler"/>
+        <ref id="film"/>
+    </sensor>
+</scene>
+
+

@@ -1,0 +1,1 @@
+- The displaced spheres were generated in Blender with a displacement modifier and procedural "clouds" textures

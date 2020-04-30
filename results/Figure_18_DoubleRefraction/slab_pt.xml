@@ -1,0 +1,107 @@
+<scene version="2.0.0">
+    <default name="spp" value="32"/>
+    <default name="crop_offset_x" value="0"/>
+    <default name="crop_offset_y" value="0"/>
+    <default name="crop_width" value="1920"/>
+    <default name="crop_height" value="1080"/>
+
+    <default name="light_angle" value="0"/>
+
+    <default name="samples_per_pass" value="4294967295"/>   <!-- == ((size_t) -1) -->
+    <default name="timeout" value="-1.0"/>
+
+    <default name="caustics_bounces"                value="2"/>
+
+    <integrator type="path_filtered_ms">
+        <integer name="max_depth" value="8"/>
+        <integer name="samples_per_pass" value="$samples_per_pass"/>
+        <float name="timeout" value="$timeout"/>
+
+        <integer name="bounces" value="$caustics_bounces"/>
+    </integrator>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/plane_1.obj"/>
+        <boolean name="caustic_caster_multi" value="true"/>
+
+        <bsdf type="dielectric">
+            <float name="int_ior" value="1.5"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/plane_2.obj"/>
+        <boolean name="caustic_bouncer" value="true"/>
+
+        <bsdf type="dielectric">
+            <float name="int_ior" value="1.5"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/planes_border.obj" />
+        <bsdf type="diffuse">
+            <rgb name="reflectance" value="0.04, 0.04, 0.04"/>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/floor.obj" />
+        <boolean name="caustic_receiver" value="true"/>
+
+        <bsdf type="diffuse">
+            <spectrum name="reflectance" type="bitmap">
+                <string name="filename" value="textures/[2K]Wood30/Wood030_2K_Color.jpg"/>
+
+                <transform name="to_uv">
+                    <scale x="3" y="3"/>
+                </transform>
+            </spectrum>
+        </bsdf>
+    </shape>
+
+    <shape type="obj">
+        <string name="filename" value="meshes/light.obj" />
+
+        <emitter type="area">
+            <spectrum name="radiance" value="100000"/>
+            <boolean name="caustic_emitter_multi" value="true"/>
+        </emitter>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="$light_angle"/>
+        </transform>
+    </shape>
+
+    <film type="hdrfilm" id="film">
+            <integer name="width" value="1920"/>
+            <integer name="height" value="1080"/>
+            <rfilter type="gaussian"/>
+
+            <integer name="crop_offset_x" value="$crop_offset_x"/>
+            <integer name="crop_offset_y" value="$crop_offset_y"/>
+            <integer name="crop_width" value="$crop_width"/>
+            <integer name="crop_height" value="$crop_height"/>
+        </film>
+    <sampler type="independent" id="sampler">
+        <integer name="sample_count" value="$spp" />
+    </sampler>
+
+    <sensor type="perspective">
+        <string name="fov_axis" value="smaller"/>
+        <float name="fov" value="39.597752"/>
+
+        <transform name="to_world">
+            <rotate x="0.0" y="1.0" z="0.0" angle="180.00"/>
+            <rotate x="1.0" y="0.0" z="0.0" angle="-39.58"/>
+            <rotate x="0.0" y="1.0" z="0.0" angle="57.07"/>
+            <rotate x="0.0" y="0.0" z="1.0" angle="-0.73"/>
+            <translate x="3.009096" y="3.606013" z="2.395111"/>
+        </transform>
+
+        <ref id="sampler"/>
+        <ref id="film"/>
+    </sensor>
+</scene>
+
+
