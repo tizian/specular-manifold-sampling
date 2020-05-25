@@ -60,10 +60,10 @@ We also combined the previous single/multi-scattering caustics and the glint met
 
 ## Results
 
-The directory `results` contains a set of folders for the different figures in the paper, e.g. `results/Figure_<N>_<Name>`. They contain Python scripts (to generate plots or compute BSDFs) as well as Mitsuba 2 scenes for rendered results.
+The directory `results` contains a set of folders for the different figures in the paper, e.g. `results/Figure_<N>_<Name>`. They contain Python scripts to generate plots or render the included Mitsuba 2 scenes.
 
 * All of these scripts need to be run *from the respective subfolder* to ensure that files are written to existing directories.
-* Most scripts assume that Mitsuba was added to the path either manually or by running `source setpaht.sh`. See the ["Running Mitsuba"](https://mitsuba2.readthedocs.io/en/latest/src/getting_started/compiling.html#running-mitsuba) section in the documentation.
+* Most scripts assume that Mitsuba was added to the path either manually or by running `source setpath.sh`. See the ["Running Mitsuba"](https://mitsuba2.readthedocs.io/en/latest/src/getting_started/compiling.html#running-mitsuba) section in the documentation.
 * Note that the output for the various *equal time comparisons* will be more or less converged depending on your hardware, and will likely not match the exact renderings from the paper.
 
 Here is a list of available results:

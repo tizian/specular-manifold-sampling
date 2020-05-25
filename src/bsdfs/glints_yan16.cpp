@@ -78,10 +78,10 @@ public:
         Log(Info, "done. (took %s)",
             util::time_string(timer.value(), true));
 
-        parameters_changed();
+        parameters_changed({});
     }
 
-    void parameters_changed() override {
+    void parameters_changed(const std::vector<std::string> &/*keys*/) override {
         m_flags = BSDFFlags::GlossyReflection | BSDFFlags::FrontSide | BSDFFlags::NeedsDifferentials;
         if (m_alpha_u != m_alpha_v)
             m_flags = m_flags | BSDFFlags::Anisotropic;

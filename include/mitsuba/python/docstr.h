@@ -557,6 +557,12 @@ fall back to coarsest mipmap level.
 The default implementation returns zero, indicating no LEAN
 information is available for that material.)doc";
 
+static const char *__doc_mitsuba_BSDF_lean_pointer =
+R"doc(Return raw pointer and data for underlying LEAN map.
+
+This is only necessary to implement a vectorized access of slopes and
+their derivatives for glints.)doc";
+
 static const char *__doc_mitsuba_BSDF_m_components = R"doc(Flags for each component of this BSDF.)doc";
 
 static const char *__doc_mitsuba_BSDF_m_flags = R"doc(Combined flags for all components of this BSDF.)doc";
@@ -4060,6 +4066,8 @@ static const char *__doc_mitsuba_Normalmap_eval_smoothed_normal_derivatives = R"
 
 static const char *__doc_mitsuba_Normalmap_filename = R"doc(Filename of underlying normal map)doc";
 
+static const char *__doc_mitsuba_Normalmap_lean_data = R"doc()doc";
+
 static const char *__doc_mitsuba_Normalmap_levels = R"doc(Number of levels in the mipmap)doc";
 
 static const char *__doc_mitsuba_Normalmap_m_filename = R"doc()doc";
@@ -6020,9 +6028,109 @@ static const char *__doc_mitsuba_Spectrum_operator_assign_2 = R"doc()doc";
 
 static const char *__doc_mitsuba_SpecularManifold = R"doc()doc";
 
-static const char *__doc_mitsuba_SpecularManifoldGlints =
-R"doc(Datastructure handling specular manifold sampling in the multi-bounce
-case.)doc";
+static const char *__doc_mitsuba_SpecularManifoldGlints = R"doc(Datastructure handling specular manifold sampling in the glints case.)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized = R"doc(Datastructure handling specular manifold sampling in the glints case.)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_SpecularManifoldGlintsVectorized = R"doc(Initialize data structure)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_compute_step = R"doc(Evaluate constraint function and compute the next step)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_evaluate_glint_contribution =
+R"doc(Evaluate throughput for a sampled glint position. Does not account for
+the (inverse) probability of sampling the glint, which needs to be
+estimated separately by repeatedly calling 'sample_path'.
+
+Parameter ``sensor_position``:
+    Point on the camera aperture / primary ray origin
+
+Parameter ``ei``:
+    Sampled emitter interaction
+
+Parameter ``si``:
+    Current shading point interaction.
+
+Parameter ``uv``:
+    UV position of the glint
+
+Returns:
+    Final contribution, involving generalized geometric term,
+    reflectance at the specular event, and emitter weight.)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_geometric_term =
+R"doc(Compute generlized geometric term between v0 and v2, via specular
+vertex v1)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_init = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_init_sampler = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_inside_parallelogram = R"doc(Test if point lies in parallelogram)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_inside_triangle = R"doc(Test if point lies in triangle)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_lean_pdf = R"doc(LEAN mapping directional sampling density used for glint MIS)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_m_config = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_m_rng = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_m_scene = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_mis_weight = R"doc(Multiple importance sampling power heuristic)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_newton_solver = R"doc(Newton solver to find admissable glint position in UV space)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_print_statistics = R"doc()doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_sample_glint =
+R"doc(Sample "glint" contribution from a specular surface
+
+Parameter ``sensor_position``:
+    Point on the camera aperture / primary ray origin
+
+Parameter ``ei``:
+    Sampled emitter interaction
+
+Parameter ``si``:
+    Shading point interaction of the glinty surface
+
+Returns:
+    A pair (success, uv_final) consisting of
+
+success: Did the sampling produce a solution?
+
+uv_final: The resulting UV position (in case of success))doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_slope = R"doc(Vectorized access into slopes)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_slope_derivative = R"doc(Vectorized access into slopes)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_specular_manifold_sampling =
+R"doc(Perform specular manifold sampling for glints, with parameters based
+on the current configuration.
+
+Internally performs MIS between SMS sampling and BSDF sampling on a
+high-frequency normal mapped material.
+
+Parameter ``sensor_position``:
+    Point on the camera aperture / primary ray origin
+
+Parameter ``si``:
+    Current (glinty) shading point interaction.
+
+Parameter ``sampler``:
+    Reference to the sampler to use for RNG
+
+Returns:
+    A tuple (contribution, bsdf_weight, bsdf_wo) consisting of
+
+contribution: Estimate of the glinty contribution at the shading point
+which is the result of MIS between SMS and BSDF sampling strategies.
+
+bsdf_weight: BSDF sampling weight produce)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlintsVectorized_specular_reflectance = R"doc(Evalaute reflectance at specular interaction towards light source)doc";
 
 static const char *__doc_mitsuba_SpecularManifoldGlints_SpecularManifoldGlints = R"doc(Initialize data structure)doc";
 
@@ -6052,6 +6160,8 @@ Returns:
 static const char *__doc_mitsuba_SpecularManifoldGlints_geometric_term =
 R"doc(Compute generlized geometric term between v0 and v2, via specular
 vertex v1)doc";
+
+static const char *__doc_mitsuba_SpecularManifoldGlints_init = R"doc()doc";
 
 static const char *__doc_mitsuba_SpecularManifoldGlints_inside_parallelogram = R"doc(Test if point lies in parallelogram)doc";
 

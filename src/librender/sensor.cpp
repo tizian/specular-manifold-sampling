@@ -5,6 +5,7 @@
 #include <mitsuba/core/logger.h>
 #include <mitsuba/render/film.h>
 #include <mitsuba/render/sampler.h>
+#include <mitsuba/core/transform.h>
 
 NAMESPACE_BEGIN(mitsuba)
 
@@ -82,6 +83,18 @@ Sensor<Float, Spectrum>::sample_ray_differential(Float time, Float sample1, cons
     result_ray.has_differentials = true;
 
     return { result_ray, result_spec };
+}
+
+MTS_VARIANT Float Sensor<Float, Spectrum>::importance(const Point3f &/* p */, const Vector3f &/* d */,
+                                                      Mask /* active */) const {
+    return 0.f;
+}
+
+MTS_VARIANT typename Sensor<Float, Spectrum>::Transform4f Sensor<Float, Spectrum>::sample_to_camera() const {
+    return Transform4f(0.f);
+}
+MTS_VARIANT typename Sensor<Float, Spectrum>::Transform4f Sensor<Float, Spectrum>::camera_to_world(Float /* time */, Mask /* active */) const {
+    return Transform4f(0.f);
 }
 
 MTS_VARIANT void Sensor<Float, Spectrum>::set_crop_window(const ScalarVector2i &crop_size,
