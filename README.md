@@ -2,7 +2,7 @@
 
 # Specular Manifold Sampling for Rendering High-Frequency Caustics and Glints
 
-Source code of the paper ["Specular Manifold Sampling for Rendering High-Frequency Caustics and Glints"](https://rgl.epfl.ch) by [Tizian Zeltner](https://tizianzeltner.com/), [Iliyan Georgiev](http://www.iliyan.com/), and [Wenzel Jakob](http://rgl.epfl.ch/people/wjakob) from SIGGRAPH 2020.
+Source code of the paper ["Specular Manifold Sampling for Rendering High-Frequency Caustics and Glints"](http://rgl.epfl.ch/publications/Zeltner2020Specular) by [Tizian Zeltner](https://tizianzeltner.com/), [Iliyan Georgiev](http://www.iliyan.com/), and [Wenzel Jakob](http://rgl.epfl.ch/people/wjakob) from SIGGRAPH 2020.
 
 The implementation is based on the Mitsuba 2 Renderer, see the lower part of the README.
 
