@@ -384,7 +384,7 @@ SpecularManifoldSingleScatter<Float, Spectrum>::newton_solver(const SurfaceInter
     }
 
     if (!success) {
-        return std::make_tuple(false, si_current);
+        return { false, si_current };
     }
 
     /* In the refraction case, the half-vector formulation of Manifold
@@ -398,10 +398,10 @@ SpecularManifoldSingleScatter<Float, Spectrum>::newton_solver(const SurfaceInter
     bool reflection = !refraction;
     if ((vtx.eta == 1.f && !reflection) ||
         (vtx.eta != 1.f && !refraction)) {
-        return std::make_tuple(false, si_current);
+        return { false, si_current };
     }
 
-    return std::make_tuple(true, si_current);
+    return { true, si_current };
 }
 
 MTS_VARIANT std::tuple<typename SpecularManifoldSingleScatter<Float, Spectrum>::Mask,
