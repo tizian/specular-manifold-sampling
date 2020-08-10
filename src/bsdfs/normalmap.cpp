@@ -37,7 +37,7 @@ public:
         fs::path file_path = fs->resolve(props.string("filename"));
         m_filename = file_path.filename().string();
         Log(Info, "Loading normalmap texture from \"%s\" ..", m_filename);
-        m_normalmap = new Normalmap(file_path);
+        m_normalmap = new Normalmap(file_path.string());
         m_total_levels = m_normalmap->levels();
 
         m_tiles = props.float_("tiles", 1.f);

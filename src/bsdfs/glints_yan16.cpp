@@ -69,7 +69,7 @@ public:
         m_filename = file_path.filename().string();
         Log(Info, "Loading normalmap texture from \"%s\" ..", m_filename);
 
-        std::string path_str = file_path;
+        std::string path_str = file_path.string();
 
         Timer timer;
         Log(Info, "Initialize flakes hierarchy..");
