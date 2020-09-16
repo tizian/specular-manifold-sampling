@@ -92,6 +92,7 @@
 
             <spectrum type="bitmap" name="opacity">
                 <string name="filename" value="textures/logo_mask.png"/>
+                <boolean name="raw" value="true"/>
             </spectrum>
         </bsdf>
     </shape>
