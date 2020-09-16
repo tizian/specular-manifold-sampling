@@ -88,13 +88,16 @@ public:
         m_flip_normals = props.bool_("flip_normals", false);
 
         // Update the to_world transform if face points and radius are also provided
-        float radius = props.float_("radius", 1.f);
+        m_radius = props.float_("radius", 1.f);
         ScalarPoint3f p0 = props.point3f("p0", ScalarPoint3f(0.f, 0.f, 0.f)),
                       p1 = props.point3f("p1", ScalarPoint3f(0.f, 0.f, 1.f));
 
+        ScalarVector3f d = p1 - p0;
+        m_length = norm(d);
+
         m_to_world = m_to_world * ScalarTransform4f::translate(p0) *
-                                  ScalarTransform4f::to_frame(ScalarFrame3f(p1 - p0)) *
-                                  ScalarTransform4f::scale(ScalarVector3f(radius, radius, 1.f));
+                                  ScalarTransform4f::to_frame(ScalarFrame3f(d / m_length)) *
+                                  ScalarTransform4f::scale(ScalarVector3f(m_radius, m_radius, m_length));
 
         update();
         set_children();
@@ -111,18 +114,18 @@ public:
         if (!(abs(S[0][0] - S[1][1]) < 1e-6f))
             Log(Warn, "'to_world' transform shouldn't contain non-uniform scaling along the X and Y axes!");
 
-        m_radius = S[0][0];
-        m_length = S[2][2];
+        m_radius = norm(m_to_world * Vector3f(1.f, 0.f, 0.f));
+        m_length = norm(m_to_world * Vector3f(0.f, 0.f, 1.f));
+
+        // Remove the scale from the object-to-world transform
+        m_to_world = m_to_world * Transform4f::scale(rcp(Vector3f(m_radius, m_radius, m_length)));
 
         if (m_radius <= 0.f) {
             m_radius = std::abs(m_radius);
             m_flip_normals = !m_flip_normals;
         }
 
-        // Reconstruct the to_world transform with uniform scaling and no shear
-        m_to_world = transform_compose(ScalarMatrix3f(1.f), Q, T);
         m_to_object = m_to_world.inverse();
-
         m_inv_surface_area = rcp(surface_area());
     }
 
