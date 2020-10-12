@@ -958,6 +958,9 @@ SpecularManifoldMultiScatter<Float, Spectrum>::specular_reflectance(const Surfac
                 f *= 4.f*abs_dot(wo_l, h_l);
             } else {
                 Float eta = hmean(real(ior));
+                if (Frame3f::cos_theta(si.wi) < 0.f) {
+                    eta = rcp(eta);
+                }
                 h_l = -normalize(si.wi + eta*wo_l);
                 f *= sqr(dot(si.wi, h_l) + eta*dot(wo_l, h_l)) / (eta*eta * abs_dot(wo_l, h_l));
             }
