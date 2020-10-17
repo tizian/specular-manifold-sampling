@@ -25,6 +25,10 @@ include_directories(
   ${OPENEXR_INCLUDE_DIRS}
 )
 
+if (MSVC)
+  add_definitions(-DOPENEXR_DLL)
+endif()
+
 add_executable(normalmap_to_flakes normalmap_to_flakes.cpp)
 target_link_libraries(normalmap_to_flakes PRIVATE IlmImf)
 add_dist(normalmap_to_flakes)
