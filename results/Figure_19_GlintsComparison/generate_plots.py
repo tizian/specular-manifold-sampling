@@ -14,7 +14,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.markers
 
-scene_idx = 0
 scene_names = ["shoes",
                "kettle"]
 scene_crops = [(160, 600, 320, 160),
@@ -43,7 +42,7 @@ def error(ref, img):
         return 100
     return tmp
 
-def time_errors(method):
+def time_errors(method, scene_idx):
     scene_name = scene_names[scene_idx]
     crop_s = 80
     crop_1_x, crop_1_y, crop_2_x, crop_2_y = scene_crops[scene_idx]
@@ -142,7 +141,7 @@ def process(scene_idx):
 
     idx = 0
     for method, name, line, lw in zip(methods, names, lines, lws):
-        errors = time_errors(method)
+        errors = time_errors(method, scene_idx)
 
         ax[0].plot(times[:-1], errors[0],
                    '{}'.format(line), ms=4, label="{}".format(name), marker='o', lw=lw)
