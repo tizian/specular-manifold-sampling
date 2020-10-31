@@ -124,7 +124,6 @@ public:
      */
     MTS_INLINE std::pair<Vector3f, Vector3f>
     eval_normal_derivatives(const Point2f &uv, size_t mip_level, bool use_slopes, Mask active=true) const {
-
 #ifdef NORMAL_MAP_FINITE_DIFFERENCES
         Float eps = rcp(Float(resolution(mip_level)));
 
@@ -133,13 +132,13 @@ public:
 
         Vector3f n, n_u, n_v;
         if (use_slopes) {
-            n = eval_normal<true>(mip_level, uv_, active),
-            n_u = eval_normal<true>(mip_level, uv_u, active),
-            n_v = eval_normal<true>(mip_level, uv_v, active);
+            n   = eval_normal(uv,   mip_level, true, active),
+            n_u = eval_normal(uv_u, mip_level, true, active),
+            n_v = eval_normal(uv_v, mip_level, true, active);
         } else {
-            n = eval_normal<false>(mip_level, uv_, active),
-            n_u = eval_normal<false>(mip_level, uv_u, active),
-            n_v = eval_normal<false>(mip_level, uv_v, active);
+            n   = eval_normal(uv,   mip_level, false, active),
+            n_u = eval_normal(uv_u, mip_level, false, active),
+            n_v = eval_normal(uv_v, mip_level, false, active);
         }
 
         Vector3f du = (n_u - n) / eps,
@@ -176,8 +175,8 @@ public:
             Vector5f tmp_u = (v10 + v00*(w[1] - 1.f) - tmp*w[1]) * Float(res),
                      tmp_v = (v01 + v00*(w[0] - 1.f) - tmp*w[0]) * Float(res);
 
-            du = Vector3f(-tmp_u[0], -tmp_u[1], 1.f);
-            dv = Vector3f(-tmp_v[0], -tmp_v[1], 1.f);
+            du = Vector3f(-tmp_u[0], -tmp_u[1], 0.f);
+            dv = Vector3f(-tmp_v[0], -tmp_v[1], 0.f);
         } else {
             const ScalarFloat *ptr = (const ScalarFloat *) m_normals_mipmap[mip_level]->data();
             Vector3f v00 = gather<Vector3f, 0, true>(ptr, idx00, active),

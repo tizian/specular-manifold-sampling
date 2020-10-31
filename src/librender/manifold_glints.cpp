@@ -253,6 +253,7 @@ SpecularManifoldGlints<Float, Spectrum>::sample_glint(const Point3f &sensor_posi
     if (any(neq(xi_start, 1.f))) {
         fp_sample = xi_start;
     }
+
     Point2f duv = (fp_sample[0] - 0.5f)*si.duv_dx +
                   (fp_sample[1] - 0.5f)*si.duv_dy;
     Point2f uv_init = si.uv + duv;
@@ -323,7 +324,7 @@ SpecularManifoldGlints<Float, Spectrum>::newton_solver(const Point2f &target_slo
         }
 
         // Make proposal
-        Point2f uv_prop = uv + m_config.step_scale*beta * step;
+        Point2f uv_prop = uv - m_config.step_scale*beta * step;
 
         // Did we step outside the footprint?
         if (!inside_parallelogram(uv_prop, fp_a, fp_b, fp_c, fp_d)) {

@@ -217,7 +217,7 @@ public:
 
     Frame3f frame(const SurfaceInteraction3f &si, Float smoothing,
                   Mask active) const override {
-        Frame3f frame = m_nested_bsdf->frame(si, smoothing, active);
+        Frame3f frame = BSDF::frame(si, smoothing, active);
 
         Point2f uv = si.uv;
         uv *= m_tiles;
@@ -248,12 +248,8 @@ public:
         Normal3f n;
         Vector3f dn_du, dn_dv;
         if (m_use_slopes) {
-            Vector3f slope = m_normalmap->eval_smoothed_normal(uv, smoothing, true, active);
-            Float inv_norm = rcp(norm(slope));
-            n = slope * inv_norm;
-            auto [dslope_du, dslope_dv] = m_normalmap->eval_smoothed_normal_derivatives(uv, smoothing, true, active);
-            dn_du = inv_norm * (dslope_du - n*dot(n, dslope_du));
-            dn_dv = inv_norm * (dslope_dv - n*dot(n, dslope_dv));
+            n = m_normalmap->eval_smoothed_normal(uv, smoothing, true, active);
+            std::tie(dn_du, dn_dv) = m_normalmap->eval_smoothed_normal_derivatives(uv, smoothing, true, active);
         } else {
             Vector3f rgb = m_normalmap->eval_smoothed_normal(uv, smoothing, false, active);
             auto [drgb_du, drgb_dv] = m_normalmap->eval_smoothed_normal_derivatives(uv, smoothing, false, active);
@@ -261,12 +257,12 @@ public:
             dn_du = 2*drgb_du;
             dn_dv = 2*drgb_dv;
         }
-        // Scale to account for tiling scale
+        // Scale to account for tiling
         dn_du *= m_tiles;
         dn_dv *= m_tiles;
 
-        Frame3f base = m_nested_bsdf->frame(si, smoothing, active);
-        auto [dbase_du, dbase_dv] = m_nested_bsdf->frame_derivative(si, smoothing, active);
+        Frame3f base = BSDF::frame(si, smoothing, active);
+        auto [dbase_du, dbase_dv] = BSDF::frame_derivative(si, smoothing, active);
 
         Vector3f world_n = base.to_world(n);
         Float inv_length_n = rcp(norm(world_n));
@@ -330,9 +326,9 @@ public:
         uv -= floor(uv);
 
         auto [du_, dv_] = m_normalmap->eval_normal_derivatives(uv, 0, true, active);
-        Vector2f du(du_[0], du_[1]);
-        Vector2f dv(dv_[0], dv_[1]);
-        // Scale to account for tiling scale
+        Vector2f du(-du_[0], -du_[1]);
+        Vector2f dv(-dv_[0], -dv_[1]);
+        // Scale to account for tiling
         du *= m_tiles;
         dv *= m_tiles;
 
