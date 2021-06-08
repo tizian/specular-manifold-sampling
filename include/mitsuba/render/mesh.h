@@ -340,6 +340,8 @@ protected:
 
     std::unordered_map<std::string, MeshAttribute> m_mesh_attributes;
 
+    bool m_use_default_uv_parameterization;
+
     // END NEW DESIGN
 
 #if defined(MTS_ENABLE_OPTIX)

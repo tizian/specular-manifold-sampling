@@ -31,6 +31,15 @@ MTS_VARIANT Mesh<Float, Spectrum>::Mesh(const Properties &props) : Base(props) {
     if (props.bool_("face_normals", false))
         m_disable_vertex_normals = true;
     m_mesh = true;
+
+    /* One of the requirements of specular manifold sampling is access to position and
+       normal derivatives based on a surface parameterization.
+       The `dp_du / dp_dv` fields in particular can only be computed however if *some* UVs
+       are provided. However, these can be minimal! It is sufficient to unwrap
+       each triangle separately onto [0, 1)^2 as we only need those derivatives locally.
+       This codebase does this per default if no texture coordinates of a mesh are provided,
+       and this flag can be used to disable it and return to the normal behaviour of Mitsuba. */
+    m_use_default_uv_parameterization = props.bool_("use_default_uv_parameterization", true);
 }
 
 MTS_VARIANT
@@ -637,11 +646,19 @@ MTS_VARIANT void Mesh<Float, Spectrum>::fill_surface_interaction(const Ray3f & /
     // Texture coordinates (if available)
     auto [dp_du, dp_dv] = coordinate_system(n);
     Point2f uv(b1, b2);
-    if (has_vertex_texcoords()) {
-        Point2f uv0 = vertex_texcoord(fi[0], active),
-                uv1 = vertex_texcoord(fi[1], active),
-                uv2 = vertex_texcoord(fi[2], active);
 
+    Point2f uv0, uv1, uv2;
+    if (has_vertex_texcoords()) {
+        uv0 = vertex_texcoord(fi[0], active);
+        uv1 = vertex_texcoord(fi[1], active);
+        uv2 = vertex_texcoord(fi[2], active);
+    } else {
+        uv0 = Point2f(0.f, 0.f);
+        uv1 = Point2f(1.f, 0.f);
+        uv2 = Point2f(0.f, 1.f);
+    }
+
+    if (has_vertex_texcoords() || m_use_default_uv_parameterization) {
         uv = uv0 * b0 + uv1 * b1 + uv2 * b2;
 
         Vector2f duv0 = uv1 - uv0,
@@ -722,11 +739,18 @@ Mesh<Float, Spectrum>::normal_derivative(const SurfaceInteraction3f &si, bool sh
     dndu = fnmadd(N, dot(N, dndu), dndu);
     dndv = fnmadd(N, dot(N, dndv), dndv);
 
+    Point2f uv0, uv1, uv2;
     if (has_vertex_texcoords()) {
-        Point2f uv0 = vertex_texcoord(fi[0], active),
-                uv1 = vertex_texcoord(fi[1], active),
-                uv2 = vertex_texcoord(fi[2], active);
+        uv0 = vertex_texcoord(fi[0], active);
+        uv1 = vertex_texcoord(fi[1], active);
+        uv2 = vertex_texcoord(fi[2], active);
+    } else {
+        uv0 = Point2f(0.f, 0.f);
+        uv1 = Point2f(1.f, 0.f);
+        uv2 = Point2f(0.f, 1.f);
+    }
 
+    if (has_vertex_texcoords() || m_use_default_uv_parameterization) {
         Vector2f duv1 = uv1 - uv0,
                  duv2 = uv2 - uv0;
         inv_det = rcp(duv1.x() * duv2.y() - duv1.y() * duv2.x());
