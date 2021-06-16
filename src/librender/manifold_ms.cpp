@@ -1162,8 +1162,8 @@ SpecularManifoldMultiScatter<Float, Spectrum>::geometric_term(const ManifoldVert
     } else {
         Float dx1_dxend = invert_tridiagonal_geo(v);
         /* Unfortunately, these geometric terms can be unstable, so to avoid
-           severe variance we need to clamp here. */
-        dx1_dxend = min(dx1_dxend, Float(2.f));
+           severe variance we can clamp here. */
+        // dx1_dxend = min(dx1_dxend, Float(2.f));
         Vector3f d = vx.p - v[0].p;
         Float inv_r2 = rcp(squared_norm(d));
         d *= sqrt(inv_r2);
