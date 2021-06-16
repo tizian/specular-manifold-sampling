@@ -720,7 +720,15 @@ SpecularManifoldMultiScatter<Float, Spectrum>::compute_step_anglediff(const Poin
         if (valid_i_refr_i) {
             auto [to, po]   = SpecularManifold::sphcoords(wo);
             auto [tio, pio] = SpecularManifold::sphcoords(wio);
-            v[i].C = Vector2f(to - tio, po - pio);
+
+            Float dt = to - tio,
+                  dp = po - pio;
+            if (dp < -math::Pi<Float>) {
+                dp += 2.f*math::Pi<Float>;
+            } else if (dp > math::Pi<Float>) {
+                dp -= 2.f*math::Pi<Float>;
+            }
+            v[i].C = Vector2f(dt, dp);
 
             Float dto_du, dpo_du, dto_dv, dpo_dv;
             Float dtio_du, dpio_du, dtio_dv, dpio_dv;
@@ -777,7 +785,15 @@ SpecularManifoldMultiScatter<Float, Spectrum>::compute_step_anglediff(const Poin
         if (valid_o_refr_o && !success_i) {
             auto [ti, pi]   = SpecularManifold::sphcoords(wi);
             auto [toi, poi] = SpecularManifold::sphcoords(woi);
-            v[i].C = Vector2f(ti - toi, pi - poi);
+
+            Float dt = ti - toi,
+                  dp = pi - poi;
+            if (dp < -math::Pi<Float>) {
+                dp += 2.f*math::Pi<Float>;
+            } else if (dp > math::Pi<Float>) {
+                dp -= 2.f*math::Pi<Float>;
+            }
+            v[i].C = Vector2f(dt, dp);
 
             Float dti_du, dpi_du, dti_dv, dpi_dv;
             Float dtoi_du, dpoi_du, dtoi_dv, dpoi_dv;

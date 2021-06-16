@@ -575,7 +575,15 @@ SpecularManifoldSingleScatter<Float, Spectrum>::compute_step_anglediff(const Poi
         auto [dwio_du, dwio_dv] = d_transform(wi, dwi_du, dwi_dv, n, dn_du, dn_dv, v1.eta);
         auto [to, po]   = SpecularManifold::sphcoords(wo);
         auto [tio, pio] = SpecularManifold::sphcoords(wio);
-        C = Vector2f(to - tio, po - pio);
+
+        Float dt = to - tio,
+              dp = po - pio;
+        if (dp < -math::Pi<Float>) {
+            dp += 2.f*math::Pi<Float>;
+        } else if (dp > math::Pi<Float>) {
+            dp -= 2.f*math::Pi<Float>;
+        }
+        C = Vector2f(dt, dp);
 
         auto [dto_du, dpo_du, dto_dv, dpo_dv]     = SpecularManifold::d_sphcoords(wo, dwo_du, dwo_dv);
         auto [dtio_du, dpio_du, dtio_dv, dpio_dv] = SpecularManifold::d_sphcoords(wio, dwio_du, dwio_dv);
@@ -594,7 +602,15 @@ SpecularManifoldSingleScatter<Float, Spectrum>::compute_step_anglediff(const Poi
 
         auto [ti, pi]   = SpecularManifold::sphcoords(wi);
         auto [toi, poi] = SpecularManifold::sphcoords(woi);
-        C = Vector2f(ti - toi, pi - poi);
+
+        Float dt = ti - toi,
+              dp = pi - poi;
+        if (dp < -math::Pi<Float>) {
+            dp += 2.f*math::Pi<Float>;
+        } else if (dp > math::Pi<Float>) {
+            dp -= 2.f*math::Pi<Float>;
+        }
+        C = Vector2f(dt, dp);
 
         auto [dti_du, dpi_du, dti_dv, dpi_dv]     = SpecularManifold::d_sphcoords(wi, dwi_du, dwi_dv);
         auto [dtoi_du, dpoi_du, dtoi_dv, dpoi_dv] = SpecularManifold::d_sphcoords(woi, dwoi_du, dwoi_dv);
