@@ -436,6 +436,9 @@ struct SpecularManifold {
         Float d_atan = rcp(1 + yx*yx);
         Vector2f d_phi = d_atan * Vector2f(w[0]*dw_du[1] - w[1]*dw_du[0],
                                            w[0]*dw_dv[1] - w[1]*dw_dv[0]) * rcp(w[0]*w[0]);
+        if (w[0] == 0.f) {
+            d_phi = 0.f;
+        }
 
         return std::make_tuple(d_theta[0], d_phi[0], d_theta[1], d_phi[1]);
     }
