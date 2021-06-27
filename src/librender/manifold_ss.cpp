@@ -716,29 +716,6 @@ SpecularManifoldSingleScatter<Float, Spectrum>::geometric_term(const ManifoldVer
     ilo = rcp(ilo);
     wo *= ilo;
 
-    Matrix2f dc1_dx0, dc2_dx1, dc2_dx2;
-    if (v2.fixed_direction) {
-        /* This case is actually a bit more tricky as we're now in a situation
-           with two "specular" constraints. As a consequence, we need to solve
-           a bigger matrix system, so we prepare a few additional terms. */
-
-        // Derivative of directional light constraint w.r.t. v1
-        Vector3f dc2_du1 = ilo * (v1.dp_du - wo * dot(wo, v1.dp_du)),
-                 dc2_dv1 = ilo * (v1.dp_dv - wo * dot(wo, v1.dp_dv));
-        dc2_dx1 = Matrix2f(
-            dot(dc2_du1, v2.dp_du), dot(dc2_dv1, v2.dp_du),
-            dot(dc2_du1, v2.dp_dv), dot(dc2_dv1, v2.dp_dv)
-        );
-
-        // Derivative of directional light constraint w.r.t. v2
-        Vector3f dc2_du2 = -ilo * (v2.dp_du - wo * dot(wo, v2.dp_du)),
-                 dc2_dv2 = -ilo * (v2.dp_dv - wo * dot(wo, v2.dp_dv));
-        dc2_dx2 = Matrix2f(
-            dot(dc2_du2, v2.dp_du), dot(dc2_dv2, v2.dp_du),
-            dot(dc2_du2, v2.dp_dv), dot(dc2_dv2, v2.dp_dv)
-        );
-    }
-
     // Setup generalized half-vector
     Float eta = v1.eta;
     if (dot(wi, v1.gn) < 0.f) {
@@ -760,27 +737,17 @@ SpecularManifoldSingleScatter<Float, Spectrum>::geometric_term(const ManifoldVer
 
     Vector3f dh_du, dh_dv;
 
-    if (v2.fixed_direction) {
-        // Derivative of specular constraint w.r.t. v0
-        dh_du = ili * (v0.dp_du - wi * dot(wi, v0.dp_du));
-        dh_dv = ili * (v0.dp_dv - wi * dot(wi, v0.dp_dv));
-        dh_du -= h * dot(dh_du, h);
-        dh_dv -= h * dot(dh_dv, h);
-        if (eta != 1.f) {
-            dh_du *= -1.f;
-            dh_dv *= -1.f;
-        }
-        dc1_dx0 = Matrix2f(
-            dot(dh_du, s), dot(dh_dv, s),
-            dot(dh_du, t), dot(dh_dv, t)
-        );
-    }
-
     // Derivative of specular constraint w.r.t. v1
-    dh_du = -v1.dp_du * (ili + ilo) + wi * (dot(wi, v1.dp_du) * ili)
-                                    + wo * (dot(wo, v1.dp_du) * ilo);
-    dh_dv = -v1.dp_dv * (ili + ilo) + wi * (dot(wi, v1.dp_dv) * ili)
-                                    + wo * (dot(wo, v1.dp_dv) * ilo);
+    if (v2.fixed_direction) {
+        // Infinite emitter "ilo" -> 0
+        dh_du = -v1.dp_du * ili + wi * (dot(wi, v1.dp_du) * ili);
+        dh_dv = -v1.dp_dv * ili + wi * (dot(wi, v1.dp_dv) * ili);
+    } else {
+        dh_du = -v1.dp_du * (ili + ilo) + wi * (dot(wi, v1.dp_du) * ili)
+                                        + wo * (dot(wo, v1.dp_du) * ilo);
+        dh_dv = -v1.dp_dv * (ili + ilo) + wi * (dot(wi, v1.dp_dv) * ili)
+                                        + wo * (dot(wo, v1.dp_dv) * ilo);
+    }
     dh_du -= h * dot(dh_du, h);
     dh_dv -= h * dot(dh_dv, h);
     if (eta != 1.f) {
@@ -799,8 +766,31 @@ SpecularManifoldSingleScatter<Float, Spectrum>::geometric_term(const ManifoldVer
     );
 
     // Derivative of specular constraint w.r.t. v2
-    dh_du = ilo * (v2.dp_du - wo * dot(wo, v2.dp_du));
-    dh_dv = ilo * (v2.dp_dv - wo * dot(wo, v2.dp_dv));
+    if (v2.fixed_direction) {
+        // Partial derivatives of a sphere, with the "radius" term cancelled out by "ilo"
+        auto [theta, phi] = SpecularManifold::sphcoords(wo);
+        Vector3f v2dp_du(-2.f*math::Pi<Float>*sin(theta)*sin(phi),
+                          2.f*math::Pi<Float>*sin(theta)*cos(phi),
+                          0.f),
+                 v2dp_dv( math::Pi<Float>*cos(theta)*cos(phi),
+                          math::Pi<Float>*cos(theta)*sin(phi),
+                         -math::Pi<Float>*sin(theta));
+
+        // Make orthonormal
+        Float inv_norm = rcp(norm(v2dp_du));
+        v2dp_du *= inv_norm;
+        Float dp = dot(v2dp_du, v2dp_dv);
+        Vector3f dp_dv_tmp = v2dp_dv - dp*v2dp_du;
+        inv_norm = rcp(norm(dp_dv_tmp));
+        v2dp_dv = dp_dv_tmp * inv_norm;
+
+        // "ilo" -> 0, i.e. this leaves "eta * ilh" terms
+        dh_du = eta * ilh * (v2dp_du - wo * dot(wo, v2dp_du));
+        dh_dv = eta * ilh * (v2dp_dv - wo * dot(wo, v2dp_dv));
+    } else {
+        dh_du = ilo * (v2.dp_du - wo * dot(wo, v2.dp_du));
+        dh_dv = ilo * (v2.dp_dv - wo * dot(wo, v2.dp_dv));
+    }
     dh_du -= h * dot(dh_du, h);
     dh_dv -= h * dot(dh_dv, h);
     if (eta != 1.f) {
@@ -812,48 +802,33 @@ SpecularManifoldSingleScatter<Float, Spectrum>::geometric_term(const ManifoldVer
         dot(dh_du, t), dot(dh_dv, t)
     );
 
-    if (v2.fixed_direction) {
-        // Invert 2x2 block matrix system
-        Float determinant = det(dc2_dx2);
-        if (abs(determinant) < 1e-6f) {
-            return 0.f;
-        }
-        Matrix2f Li = inverse(dc2_dx2);
-        Matrix2f tmp = Li * dc2_dx1;
-        Matrix2f m = dc1_dx1 - dc1_dx2 * tmp;
-        determinant = det(m);
-        if (abs(determinant) < 1e-6f) {
-            return 0.f;
-        }
-        Li = inverse(m);
-        Matrix2f sol1 = -Li * dc1_dx0;
-        Matrix2f sol0 = -tmp * sol1;
+    // Invert single 2x2 matrix
+    Float determinant = det(dc1_dx1);
+    if (abs(determinant) < 1e-6f) {
+        return 0.f;
+    }
+    Matrix2f inv_dc1_dx1 = inverse(dc1_dx1);
+    Float dx1_dx2 = abs(det(inv_dc1_dx1 * dc1_dx2));
 
-        Float G = abs(det(-sol0));
-        /* Unfortunately, these geometric terms are very unstable, so to avoid
-           severe variance we need to clamp here. */
-        G = min(G, Float(10.f));
-        G /= abs_dot(wi, v0.n); // Cancel out cosine term that will be added during BSDF evaluation
-        G *= sqr(eta);
-        return G;
-    } else {
-        // Invert single 2x2 matrix
-        Float determinant = det(dc1_dx1);
-        if (abs(determinant) < 1e-6f) {
-            return 0.f;
-        }
-        Matrix2f inv_dc1_dx1 = inverse(dc1_dx1);
-        Float dx1_dx2 = abs(det(inv_dc1_dx1 * dc1_dx2));
+    if (!v2.fixed_direction) {
         /* Unfortunately, these geometric terms are very unstable, so to avoid
            severe variance we need to clamp here. */
         dx1_dx2 = min(dx1_dx2, Float(1.f));
-        Vector3f d = v0.p - v1.p;
-        Float inv_r2 = rcp(squared_norm(d));
-        d *= sqrt(inv_r2);
-        Float dw0_dx1 = abs_dot(d, v1.gn) * inv_r2;
-        Float G = dw0_dx1 * dx1_dx2;
-        return G;
     }
+
+    Vector3f d = v0.p - v1.p;
+    Float inv_r2 = rcp(squared_norm(d));
+    d *= sqrt(inv_r2);
+    Float dw0_dx1 = abs_dot(d, v1.gn) * inv_r2;
+    Float G = dw0_dx1 * dx1_dx2;
+
+    if (v2.fixed_direction) {
+        /* Unfortunately, these geometric terms are very unstable, so to avoid
+           severe variance we need to clamp here. */
+        G = min(G, 10.f);
+    }
+
+    return G;
 }
 
 MTS_VARIANT void SpecularManifoldSingleScatter<Float, Spectrum>::print_statistics() {
